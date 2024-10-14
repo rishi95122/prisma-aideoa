@@ -96,17 +96,7 @@ model Query {
   updatedAt   DateTime @updatedAt
 }
 
-model Student {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String   @db.ObjectId
-  enrollmentNumber String  @unique
-  course          String
-  yearOfStudy     Int
-  institution     String
-  createdAt       DateTime @default(now())
 
-  User            User     @relation(fields: [userId], references: [id])
-}
 model TransferPair {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   user1Id       String   @db.ObjectId
@@ -135,17 +125,7 @@ model AdminData {
 
   User              User     @relation(fields: [userId], references: [id])
 }
-model ExecutiveMember {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId           String   @db.ObjectId
-  jobTitle         String
-  department       String
-  yearsOfExperience Int
-  company          String
-  createdAt        DateTime @default(now())
 
-  User             User     @relation(fields: [userId], references: [id])
-}
 model TransferRequest {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   userId        String   @db.ObjectId
