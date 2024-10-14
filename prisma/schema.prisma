@@ -24,6 +24,7 @@ model User {
   students         Student[] 
   transferPairs1   TransferPair[]    @relation("User1")
   transferPairs2   TransferPair[]    @relation("User2")
+  employeeIdCard   EmployeeIdCard[]
 }
 
 model TransferRequest {
@@ -42,7 +43,6 @@ model TransferRequest {
   preferredTransferArea   String
   createdAt               DateTime          @default(now())
   updatedAt               DateTime          @updatedAt
-  
   transferPairs           TransferPair[]
 }
 
@@ -56,7 +56,6 @@ model TransferPair {
   transferRequest  TransferRequest  @relation(fields: [transferRequestId], references: [id])
   transferDate     DateTime?
   status           String           @default("review")
-
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -69,7 +68,6 @@ model Student {
   yearOfStudy      Int
   institution      String
   createdAt        DateTime @default(now())
-
   user             User     @relation(fields: [userId], references: [id]) // Define relation to User
 }
 
@@ -101,7 +99,6 @@ model ExecutiveMember {
   yearsOfExperience  Int
   company            String
   createdAt         DateTime @default(now())
-
 }
 
 model Mission {
@@ -133,79 +130,16 @@ model Query {
   updatedAt   DateTime @updatedAt
 }
 
-model Student {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String   @db.ObjectId
-  enrollmentNumber String  @unique
-  course          String
-  yearOfStudy     Int
-  institution     String
-  createdAt       DateTime @default(now())
-
-  User            User     @relation(fields: [userId], references: [id])
-}
-model TransferPair {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  user1Id       String   @db.ObjectId
-  user2Id       String   @db.ObjectId
-  transferDate  DateTime
-  status        String
-
-  user1         User     @relation("User1TransferPair", fields: [user1Id], references: [id])
-  user2         User     @relation("User2TransferPair", fields: [user2Id], references: [id])
-}
-model AddTeams {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  image     String
-  category  String
-  phone     String
-  email     String
-  address   String
-}
-model AdminData {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String   @db.ObjectId
-  adminRole         String
-  specialPermissions String[]
-  otherData         Json?
-
-  User              User     @relation(fields: [userId], references: [id])
-}
-model ExecutiveMember {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId           String   @db.ObjectId
-  jobTitle         String
-  department       String
-  yearsOfExperience Int
-  company          String
-  createdAt        DateTime @default(now())
-
-  User             User     @relation(fields: [userId], references: [id])
-}
-model TransferRequest {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String   @db.ObjectId
-  subsidiary    String
-  requestDate   DateTime @default(now())
-  status        String
-
-  User          User     @relation(fields: [userId], references: [id])
-}
-model TermsAndConditions {
-  id        Int      @id @default(autoincrement())
-  content   String
-  validUpto DateTime
-  address   String
-}
-model employeeIdCard {
-  userId             Int      @id @default(autoincrement())
+model EmployeeIdCard {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
   name           String
   companyName    String
   workingArea    String
   contactNo      String
   address        String
   employeeIdNo   String    @unique
-  employeePhoto  String ?   // URL or path to the employee's photo
+  employeePhoto  String ?  
   createdAt      DateTime  @default(now())
 }
