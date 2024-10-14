@@ -20,10 +20,26 @@ model User {
   googleId         String?  @unique
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-
-  students         Student[] // One-to-many relationship
+  transferRequests TransferRequest[] 
+  students         Student[] 
 }
-
+model TransferRequest {
+  id                      Int      @id @default(autoincrement())
+  userId                  Int
+  user                    User     @relation(fields: [userId], references: [id])
+  name                    String
+  designation             String
+  aideoaIdNo              String
+  mobileNumber            String
+  currentSubsidiary       String
+  currentMinesName       String
+  grade                   String
+  preferredTransferSubsidiary String
+  preferredTransferMine   String
+  preferredTransferArea   String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
 model Student {
   id               Int      @id @default(autoincrement())
   userId           Int
