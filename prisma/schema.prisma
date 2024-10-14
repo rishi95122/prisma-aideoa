@@ -140,6 +140,7 @@ model EmployeeIdCard {
   contactNo      String
   address        String
   employeeIdNo   String    @unique
-  employeePhoto  String ?  
+  employeePhoto  String?  
+  status         String    @default("pending") 
   createdAt      DateTime  @default(now())
 }
