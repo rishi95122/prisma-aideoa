@@ -8,38 +8,59 @@ datasource db {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  email            String   @unique
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
   password         String?
   fullName         String
-  isAdmin          Boolean  @default(false)
+  isAdmin          Boolean           @default(false)
   mobile           String?
-  isEmailVerified  Boolean  @default(false)
-  isMobileVerified Boolean  @default(false)
+  isEmailVerified  Boolean           @default(false)
+  isMobileVerified Boolean           @default(false)
   userType         String?
-  googleId         String?  @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  googleId         String?           @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   transferRequests TransferRequest[] 
   students         Student[] 
+  transferPairs1   TransferPair[]    @relation("User1")
+  transferPairs2   TransferPair[]    @relation("User2")
 }
+
 model TransferRequest {
-  id                      Int      @id @default(autoincrement())
+  id                      Int               @id @default(autoincrement())
   userId                  Int
-  user                    User     @relation(fields: [userId], references: [id])
+  user                    User              @relation(fields: [userId], references: [id])
   name                    String
   designation             String
   aideoaIdNo              String
   mobileNumber            String
   currentSubsidiary       String
-  currentMinesName       String
+  currentMinesName        String
   grade                   String
   preferredTransferSubsidiary String
   preferredTransferMine   String
   preferredTransferArea   String
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+  
+  transferPairs           TransferPair[]
 }
+
+model TransferPair {
+  id               Int              @id @default(autoincrement())
+  user1Id          Int
+  user1            User             @relation("User1", fields: [user1Id], references: [id])
+  user2Id          Int
+  user2            User             @relation("User2", fields: [user2Id], references: [id])
+  transferRequestId Int
+  transferRequest  TransferRequest  @relation(fields: [transferRequestId], references: [id])
+  transferDate     DateTime?
+  status           String           @default("review")
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
 model Student {
   id               Int      @id @default(autoincrement())
   userId           Int

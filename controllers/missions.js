@@ -1,59 +1,60 @@
-import Mission from "../models/missionSchema.js";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 
 export const getMissions = async (req, res) => {
-    try {
-        const missions = await Mission.find({});
-        res.status(200).json(missions);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving missions', error });
-    }
+  try {
+    const missions = await prisma.mission.findMany();
+    res.status(200).json(missions);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving missions", error });
+  }
 };
-
-
-
 
 export const addMission = async (req, res) => {
-    const { title:mission } = req.body;
- console.log(mission)
+  const { title: mission } = req.body;
+  console.log(mission);
 
-    try {
-        const newMission = new Mission({ mission });
-        await newMission.save();
-        console.log("DSadas")
-        res.status(200).json({message:"Mission Added"});
-    } catch (error) {
-        res.status(500).json({ error: 'Error creating mission', error });
-    }
+  try {
+    const newMission = await prisma.mission.create({
+      data: { mission },
+    });
+    res.status(200).json({ message: "Mission Added", newMission });
+  } catch (error) {
+    res.status(500).json({ message: "Error creating mission", error });
+  }
 };
 
-
 export const updateMission = async (req, res) => {
-    const { mission } = req.body;
-    try {
-        const updatedMission = await Mission.findByIdAndUpdate(
-            req.params.id,
-            { mission },
-            { new: true, runValidators: true }
-        );
+  const { mission } = req.body;
 
-        if (!updatedMission) {
-            return res.status(404).json({ message: 'Mission not found' });
-        }
-        res.status(200).json(updatedMission);
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating mission', error });
+  try {
+    const updatedMission = await prisma.mission.update({
+      where: { id: req.params.id },
+      data: { mission },
+    });
+
+    res.status(200).json(updatedMission);
+  } catch (error) {
+    if (error.code === "P2025") {
+      res.status(404).json({ message: "Mission not found" });
+    } else {
+      res.status(500).json({ message: "Error updating mission", error });
     }
+  }
 };
 
 export const deleteMission = async (req, res) => {
-    try {
-        const mission = await Mission.findByIdAndDelete(req.params.id);
-        if (!mission) {
-            return res.status(404).json({ message: 'Mission not found' });
-        }
-        res.status(200).json({ message: 'Mission deleted' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting mission', error });
+  try {
+    const deletedMission = await prisma.mission.delete({
+      where: { id: req.params.id },
+    });
+    res.status(200).json({ message: "Mission deleted", deletedMission });
+  } catch (error) {
+    if (error.code === "P2025") {
+      res.status(404).json({ message: "Mission not found" });
+    } else {
+      res.status(500).json({ message: "Error deleting mission", error });
     }
+  }
 };
