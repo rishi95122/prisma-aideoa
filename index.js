@@ -1,20 +1,19 @@
 import express from "express";
-import connectdb from "./config/database.js";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import queryRoutes from "./routes/query.js";
-import eventRoutes from "./routes/events.js";
-import payuRoutes from "./routes/payu.js";
-import missionRoutes from "./routes/mission.js";
-import studentidCardRoutes from "./routes/studentIdCard.js";
-import employeeidCardRoutes from "./routes/employeeIdCard.js";
-import linkRoutes from "./routes/links.js";
-import googleRoutes from "./routes/googleroutes.js";
+// import eventRoutes from "./routes/events.js";
+// import payuRoutes from "./routes/payu.js";
+// import missionRoutes from "./routes/mission.js";
+// import studentidCardRoutes from "./routes/studentIdCard.js";
+// import employeeidCardRoutes from "./routes/employeeIdCard.js";
+// import linkRoutes from "./routes/links.js";
+// import googleRoutes from "./routes/googleroutes.js";
+// import contactUs from "./features/contact/contactRoutes.js";
+
 import session from "express-session";
-import MongoStore from "connect-mongo";
 import passport from "passport";
-import contactUs from "./features/contact/contactRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -49,18 +48,17 @@ app.use(passport.session());
 const port = 4000;
 
 app.use("/api/auth", authRoutes);
-app.use("/api/social", googleRoutes);
-app.use("/api/contact_us", contactUs);
+// app.use("/api/social", googleRoutes);
+// app.use("/api/contact_us", contactUs);
 app.use("/api/query", queryRoutes);
-app.use("/api/events", eventRoutes);
-app.use("/api/payu", payuRoutes);
-app.use("/api/links", linkRoutes);
-app.use("/api/studentidcard", studentidCardRoutes);
-app.use("/api/employeeidcard", employeeidCardRoutes);
-app.use("/api/mutualTransfer", employeeidCardRoutes);
-app.use("/api/mission", missionRoutes);
+// app.use("/api/events", eventRoutes);
+// app.use("/api/payu", payuRoutes);
+// app.use("/api/links", linkRoutes);
+// app.use("/api/studentidcard", studentidCardRoutes);
+// app.use("/api/employeeidcard", employeeidCardRoutes);
+// app.use("/api/mutualTransfer", employeeidCardRoutes);
+// app.use("/api/mission", missionRoutes);
 
 app.listen(port, () => {
-  connectdb();
   console.log(`Server is running on 4000`);
 });

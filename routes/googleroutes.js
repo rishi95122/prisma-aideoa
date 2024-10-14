@@ -26,22 +26,21 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
- async (req, res) => {
+  async (req, res) => {
     const user = req.user;
-    if(user)
-  {  const authToken= await generateToken(user)
-   
-    res.cookie("accessToken",authToken.accessToken)
-    res.cookie("refreshToken",authToken.refreshToken)
-    console.log(authToken)
-  }
-   
-    if (!user.mobile || !user.userType) {
+    if (user) {
+      const authToken = await generateToken(user);
 
+      res.cookie("accessToken", authToken.accessToken);
+      res.cookie("refreshToken", authToken.refreshToken);
+      console.log(authToken);
+    }
+
+    if (!user.mobile || !user.userType) {
       return res.redirect("http://localhost:5173/additional");
     }
-    
-    return res.redirect("http://localhost:5173?way=google")
+
+    return res.redirect("http://localhost:5173?way=google");
   }
 );
 

@@ -10,14 +10,14 @@ datasource db {
 model User {
   id               Int      @id @default(autoincrement())
   email            String   @unique
-  password         String
+  password         String?
   fullName         String
   isAdmin          Boolean  @default(false)
-  mobile           String
+  mobile           String?
   isEmailVerified  Boolean  @default(false)
   isMobileVerified Boolean  @default(false)
-  userType         String
-  googleId         String?  // Optional field
+  userType         String?
+  googleId         String?  @unique
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -35,6 +35,7 @@ model Student {
 
   user             User     @relation(fields: [userId], references: [id]) // Define relation to User
 }
+
 model SocialMediaLink {
   id        Int      @id @default(autoincrement())
   title     String
@@ -42,6 +43,7 @@ model SocialMediaLink {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model Event {
   id          Int      @id @default(autoincrement())
   days        String
@@ -53,6 +55,7 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
 model ExecutiveMember {
   id                 Int      @id @default(autoincrement())
   userId             Int
@@ -63,12 +66,14 @@ model ExecutiveMember {
   createdAt         DateTime @default(now())
 
 }
+
 model Mission {
   id       Int      @id @default(autoincrement())
   mission  String   @db.VarChar(255) // Assuming a maximum length of 255 characters
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model Otp {
   id        Int      @id @default(autoincrement())
   mail      String   @db.VarChar(255) // Assuming a maximum length for the email
@@ -78,14 +83,16 @@ model Otp {
 
   @@index([expiresAt]) // Create an index for expiration
 }
+
 model Query {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(255) // Assuming a maximum length for the name
-  mobile      String   @db.VarChar(15)  // Assuming a maximum length for mobile numbers
-  email       String   @db.VarChar(255) // Assuming a maximum length for the email
-  companyName String?  @db.VarChar(255) // Optional field
-  workingArea String?  @db.VarChar(255) // Optional field
-  query       String   @db.Text         // Using Text for potentially long query messages
+  id          String   @id @default(cuid())
+  name        String
+  mobile      String
+  email       String
+  companyName String?  @default("")
+  workingArea String?  @default("")
+  query       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
