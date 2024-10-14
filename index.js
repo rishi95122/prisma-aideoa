@@ -10,7 +10,7 @@ import studentidCardRoutes from "./routes/studentIdCard.js";
 import employeeidCardRoutes from "./routes/employeeIdCard.js";
 import linkRoutes from "./routes/links.js";
 // import googleRoutes from "./routes/googleroutes.js";
-// import contactUs from "./features/contact/contactRoutes.js";
+import contactUs from "./features/contact/contactRoutes.js";
 
 import session from "express-session";
 import passport from "passport";
@@ -49,7 +49,7 @@ const port = 4000;
 
 app.use("/api/auth", authRoutes);
 // app.use("/api/social", googleRoutes);
-// app.use("/api/contact_us", contactUs);
+app.use("/api/contact_us", contactUs);
 app.use("/api/query", queryRoutes);
 app.use("/api/events", eventRoutes);
 // app.use("/api/payu", payuRoutes);
