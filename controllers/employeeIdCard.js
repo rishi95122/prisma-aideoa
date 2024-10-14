@@ -1,10 +1,9 @@
-import employeeIdCardSchema from "../models/employeeIdCard.js";
+import { PrismaClient } from "@prisma/client";
 
-
+const prisma = new PrismaClient();
 
 export const createEmployeeIdCard = async (req, res) => {
   try {
- 
     const {
       name,
       userId,
@@ -16,40 +15,45 @@ export const createEmployeeIdCard = async (req, res) => {
       employeeIdNo,
     } = req.body;
 
-  
-    const employeeIdCard = new employeeIdCardSchema({
-      name,
-      userId,
-      companyName,
-      contactNo,
-      address,
-    
-      workingArea,
-      employeeIdNo,
+    const employeeIdCard = await prisma.employeeIdCard.create({
+      data: {
+        name,
+        userId,
+        companyName,
+        contactNo,
+        address,
+        employeePhoto,
+        workingArea,
+        employeeIdNo,
+      },
     });
-    await employeeIdCard.save();
-    res.status(200).json({ message: 'Employee ID card created successfully', employeeIdCard });
+    res
+      .status(200)
+      .json({
+        message: "Employee ID card created successfully",
+        employeeIdCard,
+      });
   } catch (error) {
-
     res.status(400).json({ message: error.message });
   }
 };
 
-
 export const getEmployeeIdCards = async (req, res) => {
   try {
-    const employeeIdCards = await employeeIdCardSchema.find();
+    const employeeIdCards = await prisma.employeeIdCard.findMany();
     res.status(200).json(employeeIdCards);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-
 export const getEmployeeIdCardById = async (req, res) => {
   try {
-    const employeeIdCard = await employeeIdCardSchema.findById(req.params.id);
-    if (!employeeIdCard) return res.status(404).json({ message: 'Employee ID card not found' });
+    const employeeIdCard = await prisma.employeeIdCard.findUnique({
+      where: { id: req.params.id },
+    });
+    if (!employeeIdCard)
+      return res.status(404).json({ message: "Employee ID card not found" });
     res.status(200).json(employeeIdCard);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -58,20 +62,36 @@ export const getEmployeeIdCardById = async (req, res) => {
 
 export const updateEmployeeIdCard = async (req, res) => {
   try {
-    const updatedEmployeeIdCard = await employeeIdCardSchema.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedEmployeeIdCard) return res.status(404).json({ message: 'Employee ID card not found' });
+    const updatedEmployeeIdCard = await prisma.employeeIdCard.update({
+      where: { id: req.params.id },
+      data: req.body,
+    });
     res.status(200).json(updatedEmployeeIdCard);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    if (error.code === "P2025") {
+      res.status(404).json({ message: "Employee ID card not found" });
+    } else {
+      res.status(400).json({ message: error.message });
+    }
   }
 };
 
 export const deleteEmployeeIdCard = async (req, res) => {
   try {
-    const deletedEmployeeIdCard = await employeeIdCardSchema.findByIdAndDelete(req.params.id);
-    if (!deletedEmployeeIdCard) return res.status(404).json({ message: 'Employee ID card not found' });
-    res.status(200).json({ message: 'Employee ID card deleted successfully' });
+    const deletedEmployeeIdCard = await prisma.employeeIdCard.delete({
+      where: { id: req.params.id },
+    });
+    res
+      .status(200)
+      .json({
+        message: "Employee ID card deleted successfully",
+        deletedEmployeeIdCard,
+      });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    if (error.code === "P2025") {
+      res.status(404).json({ message: "Employee ID card not found" });
+    } else {
+      res.status(400).json({ message: error.message });
+    }
   }
 };
