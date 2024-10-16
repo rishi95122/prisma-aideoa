@@ -11,7 +11,10 @@ import studentidCardRoutes from "./routes/studentIdCard.js";
 import employeeidCardRoutes from "./routes/employeeIdCard.js";
 import transferPairRoutes from "./routes/transferPair.js";
 import linkRoutes from "./routes/links.js";
-// import googleRoutes from "./routes/googleroutes.js";
+import ourTeamRoutes from "./routes/ourteam.js";
+import donationRoutes from "./routes/donation.js";
+import notificationRoutes from "./routes/notification.js";
+import googleRoutes from "./routes/googleroutes.js";
 import contactUs from "./features/contact/contactRoutes.js";
 
 import session from "express-session";
@@ -43,15 +46,15 @@ app.use(
     },
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 
 const port = 4000;
 
 app.use("/api/auth", authRoutes);
-// app.use("/api/social", googleRoutes);
+app.use("/api/social", googleRoutes);
 app.use("/api/contact_us", contactUs);
+app.use("/api/ourteam", ourTeamRoutes);
 app.use("/api/query", queryRoutes);
 app.use("/api/transferrequest", transferRequestRoutes);
 app.use("/api/transferpair", transferPairRoutes);
@@ -60,8 +63,10 @@ app.use("/api/events", eventRoutes);
 app.use("/api/links", linkRoutes);
 app.use("/api/studentidcard", studentidCardRoutes);
 app.use("/api/employeeidcard", employeeidCardRoutes);
+app.use("/api/notification", notificationRoutes);
 // app.use("/api/mutualTransfer", employeeidCardRoutes);
 app.use("/api/mission", missionRoutes);
+app.use("/api/donations", donationRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on 4000`);

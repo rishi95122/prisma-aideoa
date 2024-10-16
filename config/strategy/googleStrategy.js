@@ -15,16 +15,14 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if the user already exists
         const existingUser = await prisma.user.findUnique({
-          where: { googleId: profile.id },
+          where: { email: profile.emails[0].value },
         });
-
-        if (existingUser) {
+        if (existingUser.email && existingUser.googleId)
           return done(null, existingUser, { message: "User already exists" });
-        }
+        if (existingUser.email && !existingUser.googleId)
+          return done(null, null, { message: "Login with email and password" });
 
-        // Create a new user if one doesn't exist
         const newUser = await prisma.user.create({
           data: {
             fullName: profile.displayName,

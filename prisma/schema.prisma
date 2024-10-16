@@ -25,6 +25,7 @@ model User {
   transferPairs1   TransferPair[]    @relation("User1")
   transferPairs2   TransferPair[]    @relation("User2")
   employeeIdCard   EmployeeIdCard[]
+  studentIdCard    StudentIdCard[]
 }
 
 model TransferRequest {
@@ -33,8 +34,10 @@ model TransferRequest {
   user                    User              @relation(fields: [userId], references: [id])
   name                    String
   designation             String
+  designationType         String
   aideoaIdNo              String
   mobileNumber            String
+  currentPostedArea       String
   currentSubsidiary       String
   currentMinesName        String
   grade                   String
@@ -143,4 +146,47 @@ model EmployeeIdCard {
   employeePhoto  String?  
   status         String    @default("pending") 
   createdAt      DateTime  @default(now())
+}
+
+model StudentIdCard {
+  id             Int      @id @default(autoincrement())
+   userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  name           String
+  collegeName    String
+  contactNo      String
+  address        String
+  studentPhoto   String?  
+  universityId   String?  
+  status         String    @default("pending") 
+  createdAt      DateTime  @default(now())
+}
+
+
+model OurTeamMember {
+  id           Int      @id @default(autoincrement())
+  name         String
+  category     String
+  mobileNumber String
+  email        String   @unique
+  selfAddress  String
+  photo        String?  // Optional field for a photo URL
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+model Notification {
+  id        Int      @id @default(autoincrement())
+  address   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Donation {
+  id            Int     @id @default(autoincrement())
+  donationAmount Float
+  name          String
+  mobileNumber  String   @unique
+  utrNo         String   @unique
+  createdAt     DateTime @default(now())
 }

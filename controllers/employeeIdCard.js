@@ -27,12 +27,10 @@ export const createEmployeeIdCard = async (req, res) => {
         employeeIdNo,
       },
     });
-    res
-      .status(200)
-      .json({
-        message: "Employee ID card created successfully",
-        employeeIdCard,
-      });
+    res.status(200).json({
+      message: "Employee ID card created successfully",
+      employeeIdCard,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -40,7 +38,11 @@ export const createEmployeeIdCard = async (req, res) => {
 
 export const getEmployeeIdCards = async (req, res) => {
   try {
-    const employeeIdCards = await prisma.employeeIdCard.findMany();
+    const employeeIdCards = await prisma.employeeIdCard.findMany({
+      include: {
+        user: true,
+      },
+    });
     res.status(200).json(employeeIdCards);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -51,6 +53,9 @@ export const getEmployeeIdCardById = async (req, res) => {
   try {
     const employeeIdCard = await prisma.employeeIdCard.findUnique({
       where: { id: req.params.id },
+      include: {
+        user: true,
+      },
     });
     if (!employeeIdCard)
       return res.status(404).json({ message: "Employee ID card not found" });
@@ -81,12 +86,10 @@ export const deleteEmployeeIdCard = async (req, res) => {
     const deletedEmployeeIdCard = await prisma.employeeIdCard.delete({
       where: { id: req.params.id },
     });
-    res
-      .status(200)
-      .json({
-        message: "Employee ID card deleted successfully",
-        deletedEmployeeIdCard,
-      });
+    res.status(200).json({
+      message: "Employee ID card deleted successfully",
+      deletedEmployeeIdCard,
+    });
   } catch (error) {
     if (error.code === "P2025") {
       res.status(404).json({ message: "Employee ID card not found" });

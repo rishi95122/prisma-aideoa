@@ -40,21 +40,19 @@ router.post("/login", (req, res, next) => {
     });
   })(req, res, next);
 });
-
-router.post("/refresh-token", refreshToken);
-
 router.get("/getuser", passport.authenticate("jwt", { session: false }), getMe);
-router.post("/logout", logout);
 router.post(
   "/additional",
   passport.authenticate("jwt", { session: false }),
   addtionalInfo
 );
-
+router.post("/logout", logout);
 router.post(
   "/send-otp",
   [check("mail").isEmail().withMessage("Valid email is required")],
   sendOtp
 );
+router.post("/refresh-token", refreshToken);
+
 router.post("/verify-otp", validateOtp);
 export default router;

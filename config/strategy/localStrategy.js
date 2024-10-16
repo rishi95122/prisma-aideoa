@@ -5,9 +5,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Serialize user into the session (for session-based auth, not JWT)
 passport.serializeUser((user, done) => {
-  done(null, user.id); // Use `id` from Prisma instead of `_id`
+  done(null, user.id); // Serialize the user ID in the session
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -16,7 +15,7 @@ passport.deserializeUser(async (id, done) => {
       where: { id },
     });
     if (!user) throw new Error("User not found");
-    done(null, user);
+    done(null, user); // Deserialize the user by ID and populate req.user
   } catch (err) {
     done(err, null);
   }
@@ -24,7 +23,7 @@ passport.deserializeUser(async (id, done) => {
 
 passport.use(
   new LocalStrategy(
-    { usernameField: "email" },
+    { usernameField: "email" }, // Use email as the username
     async (email, password, done) => {
       try {
         const user = await prisma.user.findUnique({
@@ -35,14 +34,14 @@ passport.use(
           return done(null, false, { message: "No user found" });
         }
 
+        // Compare the hashed password
         const isMatch = await bcryptjs.compare(password, user.password);
         if (!isMatch) {
           return done(null, false, { message: "Invalid credentials" });
         }
 
-        return done(null, user);
+        return done(null, user); // User found and authenticated
       } catch (err) {
-        console.log(err);
         return done(err);
       }
     }

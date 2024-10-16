@@ -25,7 +25,10 @@ router.get(
 //  );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect:
+      "http://localhost:5173/login?msg=login with email and password",
+  }),
   async (req, res) => {
     const user = req.user;
     if (user) {
@@ -35,7 +38,6 @@ router.get(
       res.cookie("refreshToken", authToken.refreshToken);
       console.log(authToken);
     }
-
     if (!user.mobile || !user.userType) {
       return res.redirect("http://localhost:5173/additional");
     }
