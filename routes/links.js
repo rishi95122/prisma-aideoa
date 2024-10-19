@@ -1,18 +1,19 @@
-import express from 'express'
-import { addSocialMediaLink, deleteSocialMediaLink, getAllSocialMediaLinks, updateSocialMediaLink } from '../controllers/links.js';
+import express from "express";
+import {
+  addSocialMediaLink,
+  deleteSocialMediaLink,
+  getAllSocialMediaLinks,
+  updateSocialMediaLink,
+} from "../controllers/links.js";
 
 const router = express.Router();
 
+router.post("/add", addSocialMediaLink);
 
-router.post('/add',addSocialMediaLink );
+router.get("/", getAllSocialMediaLinks);
 
+router.put("/update/:id", updateSocialMediaLink);
 
-router.get('/getAll',getAllSocialMediaLinks );
+router.delete("/delete/:id", deleteSocialMediaLink);
 
-
-router.put('/update/:id' ,updateSocialMediaLink);
-
-
-router.delete('/delete/:id',deleteSocialMediaLink);
-
-export default router
+export default router;

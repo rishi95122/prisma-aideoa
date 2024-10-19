@@ -38,7 +38,11 @@ export const createEmployeeIdCard = async (req, res) => {
 
 export const getEmployeeIdCards = async (req, res) => {
   try {
-    const employeeIdCards = await prisma.employeeIdCard.find();
+    const employeeIdCards = await prisma.employeeIdCard.findMany({
+      include: {
+        user: true,
+      },
+    });
     res.status(200).json(employeeIdCards);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -49,6 +53,9 @@ export const getEmployeeIdCardById = async (req, res) => {
   try {
     const employeeIdCard = await prisma.employeeIdCard.findUnique({
       where: { id: req.params.id },
+      include: {
+        user: true,
+      },
     });
     if (!employeeIdCard)
       return res.status(404).json({ message: "Employee ID card not found" });

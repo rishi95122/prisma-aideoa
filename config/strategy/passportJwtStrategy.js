@@ -6,16 +6,16 @@ const prisma = new PrismaClient();
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "your-access-token-secret", // Use environment variable for secret key
+  secretOrKey: "your-access-token-secret",
 };
 
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
+    console.log(jwt_payload);
     try {
       const user = await prisma.user.findUnique({
         where: { id: jwt_payload.sub },
       });
-
       if (user) {
         const newUser = {
           email: user.email,

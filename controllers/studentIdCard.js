@@ -4,105 +4,66 @@ const prisma = new PrismaClient();
 
 export const getAllStudents = async (req, res) => {
   try {
-    const students = await prisma.student.findMany();
+    const students = await prisma.studentIdCard.findMany();
     res.status(200).json(students);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching students", error });
+    res.status(500).json({ error: "Failed to retrieve students" });
   }
 };
 
-export const getStudentById = async (req, res) => {
-  try {
-    const student = await prisma.student.findUnique({
-      where: { id: req.params.id },
-    });
-
-    if (!student) {
-      return res.status(404).json({ message: "Student not found" });
-    }
-
-    res.status(200).json(student);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching student", error });
-  }
-};
-
-export const createStudent = async (req, res) => {
+export const addStudent = async (req, res) => {
   const {
     name,
+    userId,
     collegeName,
     contactNo,
     address,
     studentPhoto,
-    universityIDCard,
+    universityId,
   } = req.body;
 
   try {
-    const newStudent = await prisma.student.create({
+    const newStudent = await prisma.studentIdCard.create({
       data: {
         name,
+        userId,
         collegeName,
         contactNo,
         address,
         studentPhoto,
-        universityIDCard,
+        universityId,
       },
     });
-
-    res.status(200).json({ message: "IdCard Applied", newStudent });
+    res.status(201).json(newStudent);
   } catch (error) {
-    res.status(500).json({ message: "Error creating student", error });
-  }
-};
-
-export const updateStudent = async (req, res) => {
-  const {
-    name,
-    collegeName,
-    contactNo,
-    address,
-    studentPhoto,
-    universityIDCard,
-    isApproved,
-  } = req.body;
-
-  try {
-    const updatedStudent = await prisma.student.update({
-      where: { id: req.params.id },
-      data: {
-        name,
-        collegeName,
-        contactNo,
-        address,
-        studentPhoto,
-        universityIDCard,
-        isApproved,
-      },
-    });
-
-    res.status(200).json(updatedStudent);
-  } catch (error) {
-    if (error.code === "P2025") {
-      res.status(404).json({ message: "Student not found" });
-    } else {
-      res.status(500).json({ message: "Error updating student", error });
-    }
+    res.status(500).json({ error: "Failed to add student" });
   }
 };
 
 export const deleteStudent = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const deletedStudent = await prisma.student.delete({
-      where: { id: req.params.id },
+    await prisma.studentIdCard.delete({
+      where: { id: parseInt(id) },
     });
-    res
-      .status(200)
-      .json({ message: "Student deleted successfully", deletedStudent });
+    res.status(204).send();
   } catch (error) {
-    if (error.code === "P2025") {
-      res.status(404).json({ message: "Student not found" });
-    } else {
-      res.status(500).json({ message: "Error deleting student", error });
-    }
+    res.status(500).json({ error: "Failed to delete student" });
+  }
+};
+
+export const updateStudentStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedStudent = await prisma.studentIdCard.update({
+      where: { id: parseInt(id) },
+      data: { status },
+    });
+    res.status(200).json(updatedStudent);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update status" });
   }
 };

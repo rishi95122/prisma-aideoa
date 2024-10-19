@@ -46,8 +46,8 @@ export const signup = async (req, res) => {
 };
 
 export const addtionalInfo = async (req, res) => {
-  console.log(req.body);
-  const { userType, mobile } = req.body;
+  console.log("dasda", req.body);
+  const { userType, mobile, idNo, org } = req.body;
   const { email } = req.user;
   try {
     const user = await prisma.user.update({
@@ -68,8 +68,8 @@ export const addtionalInfo = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const user = req.user;
+    console.log(user);
     const authToken = await generateToken(user);
-
     return res.status(200).json(authToken);
   } catch (error) {
     return res
@@ -79,6 +79,7 @@ export const login = async (req, res) => {
 };
 
 export const getMe = (req, res) => {
+  console.log(req.user);
   return req.user ? res.status(200).json(req.user) : res.json("Not logged in");
 };
 

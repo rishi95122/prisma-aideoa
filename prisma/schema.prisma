@@ -8,20 +8,59 @@ datasource db {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  email            String   @unique
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
   password         String?
   fullName         String
-  isAdmin          Boolean  @default(false)
+  isAdmin          Boolean           @default(false)
   mobile           String?
-  isEmailVerified  Boolean  @default(false)
-  isMobileVerified Boolean  @default(false)
+  isEmailVerified  Boolean           @default(false)
+  isMobileVerified Boolean           @default(false)
   userType         String?
-  googleId         String?  @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  googleId         String?           @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  transferRequests TransferRequest[] 
+  students         Student[] 
+  transferPairs1   TransferPair[]    @relation("User1")
+  transferPairs2   TransferPair[]    @relation("User2")
+  employeeIdCard   EmployeeIdCard[]
+  studentIdCard    StudentIdCard[]
+}
 
-  students         Student[] // One-to-many relationship
+model TransferRequest {
+  id                      Int               @id @default(autoincrement())
+  userId                  Int
+  user                    User              @relation(fields: [userId], references: [id])
+  name                    String
+  designation             String
+  designationType         String
+  aideoaIdNo              String
+  mobileNumber            String
+  currentPostedArea       String
+  currentSubsidiary       String
+  currentMinesName        String
+  grade                   String
+  preferredTransferSubsidiary String
+  preferredTransferMine   String
+  preferredTransferArea   String
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+  transferPairs           TransferPair[]
+}
+
+model TransferPair {
+  id               Int              @id @default(autoincrement())
+  user1Id          Int
+  user1            User             @relation("User1", fields: [user1Id], references: [id])
+  user2Id          Int
+  user2            User             @relation("User2", fields: [user2Id], references: [id])
+  transferRequestId Int
+  transferRequest  TransferRequest  @relation(fields: [transferRequestId], references: [id])
+  transferDate     DateTime?
+  status           String           @default("review")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
 
 model Student {
@@ -32,7 +71,6 @@ model Student {
   yearOfStudy      Int
   institution      String
   createdAt        DateTime @default(now())
-
   user             User     @relation(fields: [userId], references: [id]) // Define relation to User
 }
 
@@ -64,7 +102,6 @@ model ExecutiveMember {
   yearsOfExperience  Int
   company            String
   createdAt         DateTime @default(now())
-
 }
 
 model Mission {
@@ -96,53 +133,10 @@ model Query {
   updatedAt   DateTime @updatedAt
 }
 
-
-model TransferPair {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  user1Id       String   @db.ObjectId
-  user2Id       String   @db.ObjectId
-  transferDate  DateTime
-  status        String
-
-  user1         User     @relation("User1TransferPair", fields: [user1Id], references: [id])
-  user2         User     @relation("User2TransferPair", fields: [user2Id], references: [id])
-}
-model AddTeams {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  image     String
-  category  String
-  phone     String
-  email     String
-  address   String
-}
-model AdminData {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String   @db.ObjectId
-  adminRole         String
-  specialPermissions String[]
-  otherData         Json?
-
-  User              User     @relation(fields: [userId], references: [id])
-}
-
-model TransferRequest {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String   @db.ObjectId
-  subsidiary    String
-  requestDate   DateTime @default(now())
-  status        String
-
-  User          User     @relation(fields: [userId], references: [id])
-}
-model TermsAndConditions {
-  id        Int      @id @default(autoincrement())
-  content   String
-  validUpto DateTime
-  address   String
-}
-model employeeIdCard {
+model EmployeeIdCard {
   id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
   name           String
   userId         Int      // Assuming this is a foreign key to a User model, or another related table
   companyName    String
@@ -151,9 +145,50 @@ model employeeIdCard {
   employeePhoto  String?   // Optional field (as in some cases, employee photo may be nullable)
   workingArea    String
   employeeIdNo   String    @unique
+  employeePhoto  String?  
+  status         String    @default("pending") 
   createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+}
 
-  // If userId is related to a User model, you can set up a relation like this:
-  // user User @relation(fields: [userId], references: [id])
+model StudentIdCard {
+  id             Int      @id @default(autoincrement())
+   userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  name           String
+  collegeName    String
+  contactNo      String
+  address        String
+  studentPhoto   String?  
+  universityId   String?  
+  status         String    @default("pending") 
+  createdAt      DateTime  @default(now())
+}
+
+
+model OurTeamMember {
+  id           Int      @id @default(autoincrement())
+  name         String
+  category     String
+  mobileNumber String
+  email        String   @unique
+  selfAddress  String
+  photo        String?  // Optional field for a photo URL
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+model Notification {
+  id        Int      @id @default(autoincrement())
+  address   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Donation {
+  id            Int     @id @default(autoincrement())
+  donationAmount Float
+  name          String
+  mobileNumber  String   @unique
+  utrNo         String   @unique
+  createdAt     DateTime @default(now())
 }
