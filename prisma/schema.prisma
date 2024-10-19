@@ -142,13 +142,18 @@ model TermsAndConditions {
   address   String
 }
 model employeeIdCard {
-  userId             Int      @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
+  userId         Int      // Assuming this is a foreign key to a User model, or another related table
   companyName    String
-  workingArea    String
   contactNo      String
   address        String
+  employeePhoto  String?   // Optional field (as in some cases, employee photo may be nullable)
+  workingArea    String
   employeeIdNo   String    @unique
-  employeePhoto  String ?   // URL or path to the employee's photo
   createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // If userId is related to a User model, you can set up a relation like this:
+  // user User @relation(fields: [userId], references: [id])
 }
