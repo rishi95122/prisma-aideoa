@@ -92,3 +92,4 @@ export const logout = (req, res) => {
 
   return req.user ? res.send(req.user) : res.send("Logged out");
 };
+

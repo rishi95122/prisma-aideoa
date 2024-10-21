@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 export const getAllStudents = async (req, res) => {
   try {
     const students = await prisma.studentIdCard.findMany();
+    console.log(students)
     res.status(200).json(students);
   } catch (error) {
     res.status(500).json({ error: "Failed to retrieve students" });
@@ -26,7 +27,7 @@ export const addStudent = async (req, res) => {
     const newStudent = await prisma.studentIdCard.create({
       data: {
         name,
-        userId,
+        userId:1,
         collegeName,
         contactNo,
         address,
@@ -34,8 +35,10 @@ export const addStudent = async (req, res) => {
         universityId,
       },
     });
-    res.status(201).json(newStudent);
+    console.log("Added")
+    res.status(200).json(newStudent);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Failed to add student" });
   }
 };
@@ -54,15 +57,14 @@ export const deleteStudent = async (req, res) => {
 };
 
 export const updateStudentStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
+  const { id,status } = req.body;
+  console.log(req.body)
   try {
     const updatedStudent = await prisma.studentIdCard.update({
       where: { id: parseInt(id) },
       data: { status },
     });
-    res.status(200).json(updatedStudent);
+    res.status(200).json({message:`Id card ${status}`});
   } catch (error) {
     res.status(500).json({ error: "Failed to update status" });
   }
