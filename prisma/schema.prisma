@@ -192,3 +192,12 @@ model Donation {
   utrNo         String   @unique
   createdAt     DateTime @default(now())
 }
+
+model LatestNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  images      String[]  // Array of strings for images
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

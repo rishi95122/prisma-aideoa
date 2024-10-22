@@ -16,7 +16,7 @@ import donationRoutes from "./routes/donation.js";
 import notificationRoutes from "./routes/notification.js";
 import googleRoutes from "./routes/googleroutes.js";
 import contactUs from "./features/contact/contactRoutes.js";
-
+import latestnewsroute from "./routes/latestnewsroute.js";
 import session from "express-session";
 import passport from "passport";
 
@@ -67,7 +67,7 @@ app.use("/api/notification", notificationRoutes);
 // app.use("/api/mutualTransfer", employeeidCardRoutes);
 app.use("/api/mission", missionRoutes);
 app.use("/api/donations", donationRoutes);
-
+app.use("/api", latestnewsroute);
 app.listen(port, () => {
   console.log(`Server is running on 4000`);
 });
