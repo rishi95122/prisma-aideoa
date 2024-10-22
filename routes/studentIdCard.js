@@ -11,6 +11,6 @@ const router = express();
 router.get("/", getAllStudents);
 router.post("/", addStudent);
 router.delete("/:id", deleteStudent);
-router.put("/:id", updateStudentStatus);
+router.put("/approve", updateStudentStatus);
 
 export default router;

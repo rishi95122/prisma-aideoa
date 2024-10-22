@@ -21,6 +21,7 @@ export const addEvent = async (req, res) => {
 
     return res.status(200).json({ message: "Event Added", newEvent });
   } catch (error) {
+    console.log(error)
     res
       .status(400)
       .json({ message: "Failed to add event", error: error.message });
@@ -30,6 +31,7 @@ export const addEvent = async (req, res) => {
 export const getAllEvents = async (req, res) => {
   try {
     const events = await prisma.event.findMany();
+    console.log("Events,ev",events)
     res.status(200).json(events);
   } catch (error) {
     res
@@ -60,7 +62,7 @@ export const updateEvent = async (req, res) => {
 export const deleteEvent = async (req, res) => {
   try {
     const deletedEvent = await prisma.event.delete({
-      where: { id: req.params.id },
+      where: { id: parseInt(req.params.id) },
     });
 
     res

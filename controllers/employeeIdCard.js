@@ -14,11 +14,11 @@ export const createEmployeeIdCard = async (req, res) => {
       workingArea,
       employeeIdNo,
     } = req.body;
-
+    console.log(req.body)
     const employeeIdCard = await prisma.employeeIdCard.create({
       data: {
         name,
-        userId,
+        userId:1,
         companyName,
         contactNo,
         address,
@@ -32,6 +32,7 @@ export const createEmployeeIdCard = async (req, res) => {
       employeeIdCard,
     });
   } catch (error) {
+    console.log(error)
     res.status(400).json({ message: error.message });
   }
 };
