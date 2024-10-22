@@ -138,10 +138,12 @@ model EmployeeIdCard {
   userId         Int
   user           User     @relation(fields: [userId], references: [id])
   name           String
+  userId         Int      // Assuming this is a foreign key to a User model, or another related table
   companyName    String
-  workingArea    String
   contactNo      String
   address        String
+  employeePhoto  String?   // Optional field (as in some cases, employee photo may be nullable)
+  workingArea    String
   employeeIdNo   String    @unique
   employeePhoto  String?  
   status         String    @default("pending") 
@@ -189,4 +191,13 @@ model Donation {
   mobileNumber  String   @unique
   utrNo         String   @unique
   createdAt     DateTime @default(now())
+}
+
+model LatestNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  images      String[]  // Array of strings for images
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
