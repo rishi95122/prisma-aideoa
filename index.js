@@ -17,13 +17,10 @@ import notificationRoutes from "./routes/notification.js";
 import googleRoutes from "./routes/googleroutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
 import contactUs from "./features/contact/contactRoutes.js";
-<<<<<<< HEAD
 import onlinetestRoutes from "./routes/onlineTest.js";
 import studentnewsRoutes from "./routes/studentNews.js";
 import employeeRoutes from "./routes/emoployeeNews.js";
-=======
 import latestnewsroute from "./routes/latestnewsroute.js";
->>>>>>> 6bce902bdf3b0fdab70f3f304883d9f4f451c3ec
 import session from "express-session";
 import passport from "passport";
 import ImageKit from "imagekit";
@@ -97,7 +94,7 @@ app.use("/api/notification", notificationRoutes);
 // app.use("/api/mutualTransfer", employeeidCardRoutes);
 app.use("/api/mission", missionRoutes);
 app.use("/api/donations", donationRoutes);
-app.use("/api", latestnewsroute);
+app.use("/api/latestnews", latestnewsroute);
 app.use("/api/members", memberRoutes);
 app.use("/api/onlinetest", onlinetestRoutes);
 app.use("/api/studentnews", studentnewsRoutes);
