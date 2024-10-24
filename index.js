@@ -21,10 +21,7 @@ import onlinetestRoutes from "./routes/onlineTest.js";
 import studentnewsRoutes from "./routes/studentNews.js";
 import employeeRoutes from "./routes/emoployeeNews.js";
 import latestnewsroute from "./routes/latestnewsroute.js";
-<<<<<<< HEAD
 import educationroutes from "./routes/eduction.js";
-=======
->>>>>>> e1c4679413b7164890abb5d7f13f229113aae673
 import session from "express-session";
 import passport from "passport";
 import ImageKit from "imagekit";
