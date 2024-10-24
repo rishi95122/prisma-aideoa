@@ -235,3 +235,4 @@ model Image {
   newsId    Int      // Foreign key to LatestNews
   news      LatestNews @relation(fields: [newsId], references: [id])
 }
+
