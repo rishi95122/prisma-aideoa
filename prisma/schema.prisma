@@ -139,9 +139,10 @@ model EmployeeIdCard {
   user           User     @relation(fields: [userId], references: [id])
   name           String
   companyName    String
-  workingArea    String
   contactNo      String
   address        String
+
+  workingArea    String
   employeeIdNo   String    @unique
   employeePhoto  String?  
   status         String    @default("pending") 
@@ -217,4 +218,20 @@ model EmployeeNews {
   category    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model LatestNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  images      Image[]  // Relation with Image model
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String   // URL or path to the image
+  newsId    Int      // Foreign key to LatestNews
+  news      LatestNews @relation(fields: [newsId], references: [id])
 }

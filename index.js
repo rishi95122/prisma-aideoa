@@ -17,9 +17,13 @@ import notificationRoutes from "./routes/notification.js";
 import googleRoutes from "./routes/googleroutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
 import contactUs from "./features/contact/contactRoutes.js";
+<<<<<<< HEAD
 import onlinetestRoutes from "./routes/onlineTest.js";
 import studentnewsRoutes from "./routes/studentNews.js";
 import employeeRoutes from "./routes/emoployeeNews.js";
+=======
+import latestnewsroute from "./routes/latestnewsroute.js";
+>>>>>>> 6bce902bdf3b0fdab70f3f304883d9f4f451c3ec
 import session from "express-session";
 import passport from "passport";
 import ImageKit from "imagekit";
@@ -56,22 +60,24 @@ app.use(passport.session());
 const port = 4000;
 
 const imagekit = new ImageKit({
-  urlEndpoint: "https://ik.imagekit.io/d8e3qlogb" ,
+  urlEndpoint: "https://ik.imagekit.io/d8e3qlogb",
   publicKey: "public_Q3vYMA6u3T7ku53MOJFrGn+cgDY=",
   privateKey: "private_RhZj471ZRDPWLb/x/AxQxGYoc2Y=",
 });
 
 // allow cross-origin requests
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", 
-    "Origin, X-Requested-With, Content-Type, Accept");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
 
-app.get('/image', function (req, res) {
+app.get("/image", function (req, res) {
   var result = imagekit.getAuthenticationParameters();
-  console.log(result)
+  console.log(result);
   res.send(result);
 });
 
@@ -91,6 +97,7 @@ app.use("/api/notification", notificationRoutes);
 // app.use("/api/mutualTransfer", employeeidCardRoutes);
 app.use("/api/mission", missionRoutes);
 app.use("/api/donations", donationRoutes);
+app.use("/api", latestnewsroute);
 app.use("/api/members", memberRoutes);
 app.use("/api/onlinetest", onlinetestRoutes);
 app.use("/api/studentnews", studentnewsRoutes);
