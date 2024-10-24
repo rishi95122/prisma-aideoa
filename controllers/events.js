@@ -41,14 +41,25 @@ export const getAllEvents = async (req, res) => {
 };
 
 export const updateEvent = async (req, res) => {
+  const {data}=req.body
+  const { days, title, starttime, endtime, location, description, date}=data
+
   try {
     const updatedEvent = await prisma.event.update({
-      where: { id: req.params.id },
-      data: req.body,
+      where: { id: parseInt(data.id) },
+      data: {
+        days,
+        title,
+        location,
+        description,
+        date,
+        time: `${starttime}-${endtime}`,
+      }
     });
 
-    res.status(200).json(updatedEvent);
+    res.status(200).json({message:"Event Updated"});
   } catch (error) {
+    console.log(error)
     if (error.code === "P2025") {
       res.status(404).json({ message: "Event not found" });
     } else {

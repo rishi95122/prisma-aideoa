@@ -36,7 +36,21 @@ export const createEmployeeIdCard = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
+export const getIdCardById = async (req, res) => {
+  const {id}=req.params
+  console.log(id)
+  try {
+    const employee = await prisma.employeeIdCard.findFirst({
+      where:{userId:parseInt(id)}
+    });
+    if (!employee)
+      return res.status(404).json({ message: "Employee ID card not found" });
+    res.status(200).json(employee);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Failed to retrieve Employee Id Card" });
+  }
+};
 export const getEmployeeIdCards = async (req, res) => {
   try {
     const employeeIdCards = await prisma.employeeIdCard.findMany({
@@ -58,8 +72,7 @@ export const getEmployeeIdCardById = async (req, res) => {
         user: true,
       },
     });
-    if (!employeeIdCard)
-      return res.status(404).json({ message: "Employee ID card not found" });
+  
     res.status(200).json(employeeIdCard);
   } catch (error) {
     res.status(400).json({ message: error.message });

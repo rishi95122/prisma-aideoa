@@ -13,7 +13,7 @@ export const addDonation = async (req, res) => {
         utrNo,
       },
     });
-    res.status(201).json(newDonation);
+    res.status(200).json({message:"Donation Added"});
   } catch (error) {
     res.status(500).json({ error: "Unable to add donation" });
   }

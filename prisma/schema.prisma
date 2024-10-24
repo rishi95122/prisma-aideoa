@@ -186,7 +186,35 @@ model Donation {
   id            Int     @id @default(autoincrement())
   donationAmount Float
   name          String
-  mobileNumber  String   @unique
+  mobileNumber  String?   @unique
   utrNo         String   @unique
   createdAt     DateTime @default(now())
+}
+
+model Quiz {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  
+  quizUrl     String   
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StudentNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmployeeNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

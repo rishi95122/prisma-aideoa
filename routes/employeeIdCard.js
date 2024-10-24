@@ -3,7 +3,7 @@ import express from 'express';
 import {
   createEmployeeIdCard,
   getEmployeeIdCards,
-  getEmployeeIdCardById,
+  getIdCardById,
   updateEmployeeIdCard,
   deleteEmployeeIdCard,
 } from '../controllers/employeeIdCard.js';
@@ -16,7 +16,7 @@ router.post('/', createEmployeeIdCard);
 
 router.get('/', getEmployeeIdCards);
 
-router.get('/:id', getEmployeeIdCardById);
+router.get('/:id', getIdCardById);
 
 
 router.put('/:id', updateEmployeeIdCard);

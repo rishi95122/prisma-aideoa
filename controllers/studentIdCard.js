@@ -11,7 +11,24 @@ export const getAllStudents = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve students" });
   }
 };
-
+export const getIdCardById = async (req, res) => {
+  const {id}=req.params
+  console.log(id)
+  try {
+    const students = await prisma.studentIdCard.findFirst({
+      where:{userId:parseInt(id)}
+    });
+    
+    if (!students)
+      return res.status(404).json({ message: "Student ID card not found" });
+  
+    console.log(students)
+    res.status(200).json(students);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Failed to retrieve students" });
+  }
+};
 export const addStudent = async (req, res) => {
   const {
     name,

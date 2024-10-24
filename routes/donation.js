@@ -3,7 +3,7 @@ import { addDonation, getDonations } from "../controllers/donation.js";
 
 const router = Router();
 
-router.post("/add", addDonation);
+router.post("/", addDonation);
 
 router.get("/", getDonations);
 
