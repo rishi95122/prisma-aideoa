@@ -4,13 +4,33 @@ const prisma = new PrismaClient();
 
 export const getAllEmails = async (req, res) => {
   try {
-    const emails = await prisma.notification.findMany();
-    return res.status(200).json(emails);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated emails
+    const emails = await prisma.notification.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of emails to calculate total pages
+    const totalEmails = await prisma.notification.count();
+    const totalPages = Math.ceil(totalEmails / limit);
+
+    res.status(200).json({
+      emails,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalEmails,
+      },
+    });
   } catch (error) {
     console.error("Error fetching emails:", error);
-   return  res.status(500).json({ error: "Failed to fetch emails" });
+    res.status(500).json({ error: "Failed to fetch emails" });
   }
 };
+
 
 export const addEmail = async (req, res) => {
   const {mail} = req.body;

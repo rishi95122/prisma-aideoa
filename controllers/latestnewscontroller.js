@@ -6,15 +6,15 @@ const prisma = new PrismaClient();
 // Add a new post
 export const addPost = async (req, res) => {
   const { title, description, images } = req.body; // images should be an array of image URLs or paths
-
+  
   try {
-    const post = await prisma.LatestNews.create({
+    const post = await prisma.latestNews.create({
       data: {
         title,
         description,
         images: {
-          create: images.map((image) => ({
-            url: image, // creating each image with its URL
+          create: images.map((url) => ({
+            url, // creating each image with its URL
           })),
         },
       },
@@ -24,20 +24,28 @@ export const addPost = async (req, res) => {
     });
     res.status(201).json(post);
   } catch (error) {
+    console.error("Error creating post: ", error); // Logging error to identify issues
     res.status(500).json({ error: "Error creating post" });
   }
 };
 
 
-// Get all posts
+// Get all posts with pagination
 export const getPosts = async (req, res) => {
   try {
+    const { page = 1, limit = 10 } = req.query; // Get page and limit from query parameters, defaulting to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated posts
     const posts = await prisma.LatestNews.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
       include: {
         images: true, // Include related images
       },
     });
 
+    // Format posts
     const formattedPosts = posts.map((post) => ({
       id: post.id,
       title: post.title,
@@ -46,12 +54,22 @@ export const getPosts = async (req, res) => {
       createdAt: post.createdAt,
     }));
 
-    res.status(200).json(formattedPosts);
+    // Get the total count of posts to calculate total pages
+    const totalPosts = await prisma.LatestNews.count();
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    res.status(200).json({
+      posts: formattedPosts,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalPosts,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: "Error fetching posts" });
   }
 };
-
 
 // Get a single post by ID
 export const getPostById = async (req, res) => {
@@ -80,7 +98,6 @@ export const getPostById = async (req, res) => {
     res.status(500).json({ error: "Error fetching post" });
   }
 };
-
 
 // Update a post by ID
 export const updatePost = async (req, res) => {
@@ -118,7 +135,6 @@ export const updatePost = async (req, res) => {
   }
 };
 
-
 // Delete a post by ID
 export const deletePost = async (req, res) => {
   const { id } = req.params;
@@ -139,4 +155,3 @@ export const deletePost = async (req, res) => {
     res.status(500).json({ error: "Error deleting post" });
   }
 };
-

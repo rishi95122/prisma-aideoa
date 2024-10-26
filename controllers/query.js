@@ -29,14 +29,35 @@ export const addQuery = async (req, res) => {
 
 export const getAllQuery = async (req, res) => {
   try {
-    const queries = await prisma.query.findMany();
-    res.status(200).json(queries);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated queries
+    const queries = await prisma.query.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of queries to calculate total pages
+    const totalQueries = await prisma.query.count();
+    const totalPages = Math.ceil(totalQueries / limit);
+
+    res.status(200).json({
+      queries,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalQueries,
+      },
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve query", error: error.message });
+    res.status(500).json({
+      message: "Failed to retrieve query",
+      error: error.message,
+    });
   }
 };
+
 
 export const deleteQuery = async (req, res) => {
   try {

@@ -30,15 +30,37 @@ export const addEvent = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await prisma.event.findMany();
-    console.log("Events,ev",events)
-    res.status(200).json(events);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated events
+    const events = await prisma.event.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of events to calculate total pages
+    const totalEvents = await prisma.event.count();
+    const totalPages = Math.ceil(totalEvents / limit);
+
+    console.log("Events:", events);
+
+    res.status(200).json({
+      events,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalEvents,
+      },
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve events", error: error.message });
+    res.status(500).json({
+      message: "Failed to retrieve events",
+      error: error.message,
+    });
   }
 };
+
 
 export const updateEvent = async (req, res) => {
   const {data}=req.body
