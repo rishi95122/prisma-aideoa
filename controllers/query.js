@@ -36,16 +36,37 @@ export const getAllQuery = async (req, res) => {
 
 
   try {
+    const { page = 1, limit = 10 } = req.query; 
+    const skip = (page - 1) * limit; 
+
+ 
     const queries = await prisma.query.findMany({
       where:filter
+    ,
+      skip: parseInt(skip),
+      take: parseInt(limit),
     });
-    res.status(200).json(queries);
+
+
+    const totalQueries = await prisma.query.count();
+    const totalPages = Math.ceil(totalQueries / limit);
+
+    res.status(200).json({
+      queries,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalQueries,
+      },
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve query", error: error.message });
+    res.status(500).json({
+      message: "Failed to retrieve query",
+      error: error.message,
+    });
   }
 };
+
 
 export const deleteQuery = async (req, res) => {
   try {

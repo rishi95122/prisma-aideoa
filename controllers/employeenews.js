@@ -4,16 +4,36 @@ const prisma = new PrismaClient();
 
 
 
-// Get all news
+// Get all news with pagination
 export const getAllNews = async (req, res) => {
-  console.log("employee")
+  console.log("employee");
   try {
-    const newsList = await prisma.employeeNews.findMany();
-    res.status(200).json(newsList);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated news
+    const newsList = await prisma.employeeNews.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of news to calculate total pages
+    const totalNews = await prisma.employeeNews.count();
+    const totalPages = Math.ceil(totalNews / limit);
+
+    res.status(200).json({
+      newsList,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalNews,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: 'Unable to fetch news' });
   }
 };
+
 
 // Create new news item
 export const createNews = async (req, res) => {

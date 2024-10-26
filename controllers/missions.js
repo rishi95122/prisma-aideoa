@@ -4,12 +4,35 @@ const prisma = new PrismaClient();
 
 export const getMissions = async (req, res) => {
   try {
-    const missions = await prisma.mission.findMany();
-    res.status(200).json(missions);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated missions
+    const missions = await prisma.mission.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of missions to calculate total pages
+    const totalMissions = await prisma.mission.count();
+    const totalPages = Math.ceil(totalMissions / limit);
+
+    res.status(200).json({
+      missions,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalMissions,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving missions", error });
+    res.status(500).json({
+      message: "Error retrieving missions",
+      error: error.message,
+    });
   }
 };
+
 
 export const addMission = async (req, res) => {
   const { title: mission } = req.body;

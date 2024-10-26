@@ -66,17 +66,36 @@ export const getEmployeeIdCards = async (req, res) => {
     ...(searchTerm ? { name: { contains: searchTerm } } : {}),
   };
   try {
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated employee ID cards
     const employeeIdCards = await prisma.employeeIdCard.findMany({
       where:filter,
+      skip: parseInt(skip),
+      take: parseInt(limit),
       include: {
-        user: true,
+        user: true, 
       },
     });
-    res.status(200).json(employeeIdCards);
+
+    // Get the total count of employee ID cards to calculate total pages
+    const totalEmployeeIdCards = await prisma.employeeIdCard.count();
+    const totalPages = Math.ceil(totalEmployeeIdCards / limit);
+
+    res.status(200).json({
+      employeeIdCards,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalEmployeeIdCards,
+      },
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 export const getEmployeeIdCardById = async (req, res) => {
   try {

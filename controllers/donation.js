@@ -19,11 +19,32 @@ export const addDonation = async (req, res) => {
   }
 };
 
+// Get all donations with pagination
 export const getDonations = async (req, res) => {
   try {
-    const donations = await prisma.donation.findMany();
-    res.status(200).json(donations);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated donations
+    const donations = await prisma.donation.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of donations to calculate total pages
+    const totalDonations = await prisma.donation.count();
+    const totalPages = Math.ceil(totalDonations / limit);
+
+    res.status(200).json({
+      donations,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalDonations,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: "Unable to fetch donations" });
   }
 };
+

@@ -4,29 +4,55 @@ const prisma = new PrismaClient();
 
 export const getAllMembers = async (req, res) => {
   try {
-    
-    const { category } = req.query; 
-      console.log("sd",category)
+    const { category, page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
     let members;
+    let totalMembers;
 
     if (category) {
-    
+      // Fetch paginated members by category
       members = await prisma.ourTeamMember.findMany({
+        where: {
+          category: category,
+        },
+        skip: parseInt(skip),
+        take: parseInt(limit),
+      });
+      
+      // Get the total count of members in this category to calculate total pages
+      totalMembers = await prisma.ourTeamMember.count({
         where: {
           category: category,
         },
       });
     } else {
-     
-      members = await prisma.ourTeamMember.findMany();
+      // Fetch all paginated members without category filter
+      members = await prisma.ourTeamMember.findMany({
+        skip: parseInt(skip),
+        take: parseInt(limit),
+      });
+
+      // Get the total count of all members to calculate total pages
+      totalMembers = await prisma.ourTeamMember.count();
     }
 
-    res.status(200).json(members);
+    const totalPages = Math.ceil(totalMembers / limit);
+
+    res.status(200).json({
+      members,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalMembers,
+      },
+    });
   } catch (error) {
     console.error("Error fetching members:", error);
     res.status(500).json({ error: "Failed to fetch members" });
   }
 };
+
 
 export const createMember = async (req, res) => {
   const { name, category, mobileNumber, email, selfAddress, photo } = req.body;
