@@ -29,8 +29,16 @@ export const addEvent = async (req, res) => {
 };
 
 export const getAllEvents = async (req, res) => {
+  const {searchTerm}=req.query;
+
+  const filter = {
+    ...(searchTerm ? { title: { contains: searchTerm } } : {}),
+  };
+console.log(filter)
   try {
-    const events = await prisma.event.findMany();
+    const events = await prisma.event.findMany({
+      where:filter
+    });
     console.log("Events,ev",events)
     res.status(200).json(events);
   } catch (error) {

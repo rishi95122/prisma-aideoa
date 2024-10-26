@@ -7,11 +7,12 @@ import {
   updateEmployeeIdCard,
   deleteEmployeeIdCard,
 } from '../controllers/employeeIdCard.js';
+import protectRoute from "../middleware/protectedRoute.js";
 
 const router = express.Router();
 
 
-router.post('/', createEmployeeIdCard);
+router.post('/',protectRoute, createEmployeeIdCard);
 
 
 router.get('/', getEmployeeIdCards);

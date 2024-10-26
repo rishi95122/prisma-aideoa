@@ -3,13 +3,16 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getMembers = async (req, res) => {
-  const {userType}=req.query
+  const {userType,searchTerm}=req.query
  const type= userType==='Students'?'student':userType==='All'?{}:'employee'
- console.log(type)
+ const filter = {
+   ...(searchTerm ? { fullName: { contains: searchTerm } } : {}),
+ };
     try {
       const users = await prisma.user.findMany({
         where:{
-          userType:type
+          userType:type,
+          ...filter
         },
         select: {
             id: true,         

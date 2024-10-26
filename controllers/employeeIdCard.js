@@ -14,24 +14,32 @@ export const createEmployeeIdCard = async (req, res) => {
       workingArea,
       employeeIdNo,
     } = req.body;
-    console.log(req.body)
-    const employeeIdCard = await prisma.employeeIdCard.create({
+    const exist = await prisma.employeeIdCard.findUnique({
+      where:{
+        userId:req.user
+      }
+    });
+  if(exist)
+    return res.status(400).json({message:"Already applied before"})
+
+await prisma.employeeIdCard.create({
       data: {
         name,
-        userId:1,
+        userId:parseInt(req.user),
         companyName,
         contactNo,
         address,
         employeePhoto,
         workingArea,
         employeeIdNo,
+        status:"approved"
       },
     });
-    res.status(200).json({
+   return res.status(200).json({
       message: "Employee ID card created successfully",
-      employeeIdCard,
     });
-  } catch (error) {
+  }
+   catch (error) {
     console.log(error)
     res.status(400).json({ message: error.message });
   }
@@ -52,8 +60,14 @@ export const getIdCardById = async (req, res) => {
   }
 };
 export const getEmployeeIdCards = async (req, res) => {
+  const {searchTerm}=req.query;
+  console.log(searchTerm)
+  const filter = {
+    ...(searchTerm ? { name: { contains: searchTerm } } : {}),
+  };
   try {
     const employeeIdCards = await prisma.employeeIdCard.findMany({
+      where:filter,
       include: {
         user: true,
       },
