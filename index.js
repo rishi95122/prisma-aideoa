@@ -21,6 +21,7 @@ import onlinetestRoutes from "./routes/onlineTest.js";
 import studentnewsRoutes from "./routes/studentNews.js";
 import employeeRoutes from "./routes/emoployeeNews.js";
 import latestnewsroute from "./routes/latestnewsroute.js";
+import educationroutes from "./routes/eduction.js";
 import session from "express-session";
 import passport from "passport";
 import ImageKit from "imagekit";
@@ -99,6 +100,7 @@ app.use("/api/members", memberRoutes);
 app.use("/api/onlinetest", onlinetestRoutes);
 app.use("/api/studentnews", studentnewsRoutes);
 app.use("/api/employeenews", employeeRoutes);
+app.use("/api/education", educationroutes);
 app.listen(port, () => {
   console.log(`Server is running on 4000`);
 });
