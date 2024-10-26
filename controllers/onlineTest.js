@@ -1,15 +1,34 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-// Get all quizzes
 export const getQuizzes = async (req, res) => {
   try {
-    const quizzes = await prisma.quiz.findMany();
-    res.json(quizzes);
+    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
+    const skip = (page - 1) * limit; // Calculate the offset
+
+    // Fetch paginated quizzes
+    const quizzes = await prisma.quiz.findMany({
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+    // Get the total count of quizzes to calculate total pages
+    const totalQuizzes = await prisma.quiz.count();
+    const totalPages = Math.ceil(totalQuizzes / limit);
+
+    res.status(200).json({
+      quizzes,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalQuizzes,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch quizzes' });
   }
 };
+
 
 
 
