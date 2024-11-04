@@ -16,7 +16,7 @@ const protectRoute = async (req, res, next) => {
       return res.status(401).json({ error: "Unauthorized: Invalid Token" });
     }
     console.log("Dec", decoded);
-    req.user = decoded.sub;
+    req.user = decoded;
     next();
   } catch (err) {
     console.log("Error in protectRoute middleware", err.message);

@@ -16,7 +16,7 @@ export const createEmployeeIdCard = async (req, res) => {
     } = req.body;
     const exist = await prisma.employeeIdCard.findUnique({
       where:{
-        userId:req.user
+        userId:req.user.sub
       }
     });
   if(exist)
@@ -25,7 +25,7 @@ export const createEmployeeIdCard = async (req, res) => {
 await prisma.employeeIdCard.create({
       data: {
         name,
-        userId:parseInt(req.user),
+        userId:parseInt(req.user.sub),
         companyName,
         contactNo,
         address,

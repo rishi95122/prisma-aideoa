@@ -3,8 +3,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const addDonation = async (req, res) => {
+  console.log(req.body)
   try {
-    const { donationAmount, name, mobileNumber, utrNo } = req.body;
+    const { donationAmount, name, mobileNumber, transactionId:utrNo } = req.body;
     const newDonation = await prisma.donation.create({
       data: {
         donationAmount,
@@ -13,8 +14,10 @@ export const addDonation = async (req, res) => {
         utrNo,
       },
     });
+  
     res.status(200).json({message:"Donation Added"});
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Unable to add donation" });
   }
 };

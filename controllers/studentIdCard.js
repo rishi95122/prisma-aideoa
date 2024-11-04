@@ -47,23 +47,22 @@ export const addStudent = async (req, res) => {
     universityIDCard,
   } = req.body;
 
-console.log(req.user)
 
   try {
     const exist = await prisma.studentIdCard.findUnique({
       where:{
-        userId:req.user
+        userId:req.user.sub
       }
     });
     if(exist)
     {
       await prisma.studentIdCard.update({
         where:{
-          userId:parseInt(req.user)
+          userId:parseInt(req.user.sub)
         },
         data: {
           name,
-          userId:parseInt(req.user),
+          userId:parseInt(req.user.sub),
           collegeName,
           contactNo,
           address,
@@ -78,7 +77,7 @@ console.log(req.user)
   await prisma.studentIdCard.create({
       data: {
         name,
-        userId:parseInt(req.user),
+        userId:parseInt(req.user.sub),
         collegeName,
         contactNo,
         address,

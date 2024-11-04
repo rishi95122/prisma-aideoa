@@ -44,6 +44,7 @@ model TransferRequest {
   preferredTransferSubsidiary String
   preferredTransferMine   String
   preferredTransferArea   String
+  status                  String            @default("pending")
   createdAt               DateTime          @default(now())
   updatedAt               DateTime          @updatedAt
   transferPairs           TransferPair[]
@@ -58,7 +59,6 @@ model TransferPair {
   transferRequestId Int
   transferRequest  TransferRequest  @relation(fields: [transferRequestId], references: [id])
   transferDate     DateTime?
-  status           String           @default("review")
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }

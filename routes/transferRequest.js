@@ -4,13 +4,14 @@ import {
   getAllTransferRequests,
   getTransferRequestById,
 } from "../controllers/transferRequest.js";
+import protectRoute from "../middleware/protectedRoute.js";
 
 const router = express.Router();
 
 router.get("/", getAllTransferRequests);
 
-router.get("/:id", getTransferRequestById);
+router.get("/getrequestbyme",protectRoute, getTransferRequestById);
 
-router.post("/", addTransferRequest);
+router.post("/",protectRoute, addTransferRequest);
 
 export default router;

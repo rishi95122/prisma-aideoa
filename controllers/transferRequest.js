@@ -26,26 +26,26 @@ export const getAllTransferRequests = async (req, res) => {
 };
 
 export const getTransferRequestById = async (req, res) => {
-  const { id } = req.params;
+  const { sub:id } = req.user
 
   try {
-    const request = await prisma.transferRequest.findUnique({
-      where: { id: parseInt(id) },
+    const request = await prisma.transferRequest.findMany({
+      where: { userId: parseInt(id) },
     });
-
+    console.log("request,r",request)
     if (!request) {
       return res.status(404).json({ error: "Transfer request not found" });
     }
-
+    console.log(request)
     return res.status(200).json(request);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Failed to fetch transfer request" });
   }
 };
 
 export const addTransferRequest = async (req, res) => {
   const {
-    userId,
     name,
     designation,
     aideoaid,
@@ -59,11 +59,13 @@ export const addTransferRequest = async (req, res) => {
     transferarea,
     designationType,
   } = req.body;
-  console.log("ADAS", req.body);
+  const {sub,userType}=req.user
+  if(userType!=='employee')
+    throw new Error("You are not an employee")
   try {
     const newRequest = await prisma.transferRequest.create({
       data: {
-        userId: 1,
+        userId: parseInt(sub),
         name,
         designation,
         designationType,
