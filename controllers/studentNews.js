@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
-
 
 // Get all news
 export const getAllNews = async (req, res) => {
@@ -10,7 +8,7 @@ export const getAllNews = async (req, res) => {
     const newsList = await prisma.studentNews.findMany();
     res.status(200).json(newsList);
   } catch (error) {
-    res.status(500).json({ error: 'Unable to fetch news' });
+    res.status(500).json({ error: "Unable to fetch news" });
   }
 };
 
@@ -26,10 +24,10 @@ export const createNews = async (req, res) => {
         category,
       },
     });
-    res.status(200).json({message:"News Added"});
+    res.status(200).json({ message: "News Added" });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: 'Unable to create news' });
+    console.log(error);
+    res.status(500).json({ error: "Unable to create news" });
   }
 };
 
@@ -44,7 +42,7 @@ export const updateNews = async (req, res) => {
     });
     res.status(200).json({message:"News Updated"});
   } catch (error) {
-    res.status(500).json({ error: 'Unable to update news' });
+    res.status(500).json({ error: "Unable to update news" });
   }
 };
 
@@ -55,8 +53,8 @@ export const deleteNews = async (req, res) => {
     await prisma.studentNews.delete({
       where: { id: Number(id) },
     });
-    res.status(200).json({ message: 'News deleted successfully' });
+    res.status(204).json({ message: "News deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: 'Unable to delete news' });
+    res.status(500).json({ error: "Unable to delete news" });
   }
 };
