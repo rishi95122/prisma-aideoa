@@ -3,9 +3,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getAllStudents = async (req, res) => {
+  const {searchTerm}=req.query;
+  console.log(searchTerm)
+  const filter = {
+    ...(searchTerm ? { name: { contains: searchTerm } } : {}),
+  };
+
   try {
-    const students = await prisma.studentIdCard.findMany();
-    console.log(students)
+    const students = await prisma.studentIdCard.findMany({
+      where:filter
+    });
+
     res.status(200).json(students);
   } catch (error) {
     res.status(500).json({ error: "Failed to retrieve students" });
@@ -13,7 +21,6 @@ export const getAllStudents = async (req, res) => {
 };
 export const getIdCardById = async (req, res) => {
   const {id}=req.params
-  console.log(id)
   try {
     const students = await prisma.studentIdCard.findFirst({
       where:{userId:parseInt(id)}
@@ -37,23 +44,50 @@ export const addStudent = async (req, res) => {
     contactNo,
     address,
     studentPhoto,
-    universityId,
+    universityIDCard,
   } = req.body;
 
+console.log(req.user)
+
   try {
-    const newStudent = await prisma.studentIdCard.create({
+    const exist = await prisma.studentIdCard.findUnique({
+      where:{
+        userId:req.user
+      }
+    });
+    if(exist)
+    {
+      await prisma.studentIdCard.update({
+        where:{
+          userId:parseInt(req.user)
+        },
+        data: {
+          name,
+          userId:parseInt(req.user),
+          collegeName,
+          contactNo,
+          address,
+          studentPhoto,
+          universityId:universityIDCard,
+          status:"pending"
+        },
+      });
+    }
+    else
+
+  await prisma.studentIdCard.create({
       data: {
         name,
-        userId:1,
+        userId:parseInt(req.user),
         collegeName,
         contactNo,
         address,
         studentPhoto,
-        universityId,
+        universityId:universityIDCard,
       },
     });
-    console.log("Added")
-    res.status(200).json(newStudent);
+
+    res.status(200).json({message:"Added"});
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: "Failed to add student" });

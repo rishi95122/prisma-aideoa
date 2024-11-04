@@ -28,17 +28,26 @@ export const addQuery = async (req, res) => {
 };
 
 export const getAllQuery = async (req, res) => {
-  try {
-    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
-    const skip = (page - 1) * limit; // Calculate the offset
+  const {searchTerm}=req.query;
+  console.log(searchTerm)
+  const filter = {
+    ...(searchTerm ? { name: { contains: searchTerm } } : {}),
+  };
 
-    // Fetch paginated queries
+
+  try {
+    const { page = 1, limit = 10 } = req.query; 
+    const skip = (page - 1) * limit; 
+
+ 
     const queries = await prisma.query.findMany({
+      where:filter
+    ,
       skip: parseInt(skip),
       take: parseInt(limit),
     });
 
-    // Get the total count of queries to calculate total pages
+
     const totalQueries = await prisma.query.count();
     const totalPages = Math.ceil(totalQueries / limit);
 
@@ -62,6 +71,7 @@ export const getAllQuery = async (req, res) => {
 export const deleteQuery = async (req, res) => {
   try {
     const { id } = req.params;
+   
     const deletedForm = await prisma.query.delete({
       where: { id },
     });
@@ -72,6 +82,7 @@ export const deleteQuery = async (req, res) => {
     if (error.code === "P2025") {
       return res.status(404).json({ message: "Query not found" });
     }
+    console.log(error)
     res
       .status(400)
       .json({ message: "Failed to delete the Query", error: error.message });

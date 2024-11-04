@@ -5,15 +5,16 @@ const accessTokenExpiry = "10m";
 
 const refreshTokenExpiry = "60m";
 export const generateToken = async (user) => {
+  console.log("userrrrr",user)
   const accessToken = jwt.sign(
-    { sub: user.id, fullName: user.fullName },
+    {  fullName: user.fullName,userType:user.userType,sub: user.id  },
     accessTokenSecret,
     {
       expiresIn: accessTokenExpiry,
     }
   );
   const refreshToken = jwt.sign(
-    { sub: user.id, fullName: user.fullName },
+    {   fullName: user.fullName,userType:user.userType,sub: user.id },
     refreshTokenSecret,
     {
       expiresIn: refreshTokenExpiry,

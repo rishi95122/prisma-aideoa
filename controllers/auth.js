@@ -68,7 +68,7 @@ export const addtionalInfo = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const user = req.user;
-    console.log(user);
+    console.log("userrr",user);
     const authToken = await generateToken(user);
     return res.status(200).json(authToken);
   } catch (error) {

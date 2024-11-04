@@ -6,12 +6,13 @@ import {
   updateStudentStatus,
   getIdCardById
 } from "../controllers/studentIdCard.js";
+import protectRoute from "../middleware/protectedRoute.js";
 
 const router = express();
 
 router.get("/", getAllStudents);
 router.get("/:id", getIdCardById);
-router.post("/", addStudent);
+router.post("/",protectRoute, addStudent);
 router.delete("/:id", deleteStudent);
 router.put("/approve", updateStudentStatus);
 

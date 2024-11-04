@@ -40,7 +40,7 @@ export const updateNews = async (req, res) => {
       where: { id: Number(id) },
       data: { title, description, category },
     });
-    res.status(200).json(updatedNews);
+    res.status(200).json({message:"News Updated"});
   } catch (error) {
     res.status(500).json({ error: "Unable to update news" });
   }

@@ -135,7 +135,7 @@ model Query {
 
 model EmployeeIdCard {
   id             Int      @id @default(autoincrement())
-  userId         Int
+  userId         Int      @unique
   user           User     @relation(fields: [userId], references: [id])
   name           String
   companyName    String
@@ -151,7 +151,7 @@ model EmployeeIdCard {
 
 model StudentIdCard {
   id             Int      @id @default(autoincrement())
-   userId         Int
+   userId         Int     @unique
   user           User     @relation(fields: [userId], references: [id])
   name           String
   collegeName    String
@@ -236,3 +236,17 @@ model Image {
   news      LatestNews @relation(fields: [newsId], references: [id])
 }
 
+model File {
+  id        Int     @id @default(autoincrement())
+  name      String
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Video {
+  id        Int     @id @default(autoincrement())
+  title     String
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

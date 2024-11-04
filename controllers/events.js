@@ -29,12 +29,20 @@ export const addEvent = async (req, res) => {
 };
 
 export const getAllEvents = async (req, res) => {
+  const {searchTerm}=req.query;
+
+  const filter = {
+    ...(searchTerm ? { title: { contains: searchTerm } } : {}),
+  };
+console.log(filter)
   try {
     const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
     const skip = (page - 1) * limit; // Calculate the offset
 
     // Fetch paginated events
     const events = await prisma.event.findMany({
+      where:filter
+    ,
       skip: parseInt(skip),
       take: parseInt(limit),
     });

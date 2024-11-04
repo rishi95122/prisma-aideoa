@@ -56,6 +56,7 @@ export const createQuiz = async (req, res) => {
 export const updateQuiz = async (req, res) => {
   const { id } = req.params;
   const { title, description, quizUrl, category } = req.body;
+  console.log(id)
   try {
     const updatedQuiz = await prisma.quiz.update({
       where: { id: parseInt(id) },
@@ -66,8 +67,9 @@ export const updateQuiz = async (req, res) => {
         category
       }
     });
-    res.json(updatedQuiz);
+    res.status(200).json({message:"Test updated"});
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Failed to update quiz' });
   }
 };
