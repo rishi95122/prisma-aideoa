@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 
 export const getMembers = async (req, res) => {
   const { userType, page = 1, limit = 10 } = req.query;
-  const type = userType === 'Students' ? 'student' : userType === 'All' ? {} : 'employee';
+  const type =
+    userType === "Students" ? "student" : userType === "All" ? {} : "employee";
   console.log(type);
 
   const skip = (page - 1) * limit;
@@ -37,10 +38,12 @@ export const getMembers = async (req, res) => {
 
     res.status(200).json({
       users,
-      page: parseInt(page),
-      limit: take,
-      totalPages: Math.ceil(totalUsers / limit),
-      totalUsers,
+      pagination: {
+        page: parseInt(page),
+        limit: take,
+        totalPages: Math.ceil(totalUsers / limit),
+        totalUsers,
+      },
     });
   } catch (error) {
     console.log(error);
