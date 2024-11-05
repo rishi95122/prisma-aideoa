@@ -4,16 +4,15 @@ const prisma = new PrismaClient();
 
 export const getMissions = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
-    const skip = (page - 1) * limit; // Calculate the offset
-
-    // Fetch paginated missions
+    const { page = 1, limit = 8 } = req.query; 
+    const skip = (page - 1) * limit; 
+    console.log(page)
+    console.log(skip)
     const missions = await prisma.mission.findMany({
       skip: parseInt(skip),
       take: parseInt(limit),
     });
-
-    // Get the total count of missions to calculate total pages
+    console.log(missions)
     const totalMissions = await prisma.mission.count();
     const totalPages = Math.ceil(totalMissions / limit);
 

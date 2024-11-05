@@ -6,24 +6,35 @@ const prisma = new PrismaClient();
 
 export const getAllTransferRequests = async (req, res) => {
   try {
-    const { designationType, searchTerm } = req.query;
-    console.log(designationType);
+    const { designationType, searchTerm, searchCriteria } = req.query;
+    console.log(searchCriteria)
+    // Parse searchCriteria from JSON if sent as a string
+  
+
+    // Build the filter object dynamically based on received parameters
     const filter = {
       ...(designationType ? { designationType } : {}),
       ...(searchTerm ? { name: { contains: searchTerm } } : {}),
+      ...(searchCriteria.from ? { currentSubsidiary: searchCriteria.from } : {}),
+      ...(searchCriteria.to ? { preferredTransferSubsidiary: searchCriteria.to } : {}),
     };
-    console.log(filter);
+
+    console.log("Filter:", filter);
+
     const requests = await prisma.transferRequest.findMany({
       where: filter,
       include: {
         user: true,
       },
     });
+
     return res.status(200).json(requests);
   } catch (error) {
+    console.error("Error fetching transfer requests:", error);
     res.status(500).json({ error: "Failed to fetch transfer requests" });
   }
 };
+
 
 export const getTransferRequestById = async (req, res) => {
   const { sub:id } = req.user

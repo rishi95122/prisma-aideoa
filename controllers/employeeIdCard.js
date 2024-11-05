@@ -49,7 +49,10 @@ export const getIdCardById = async (req, res) => {
   console.log(id)
   try {
     const employee = await prisma.employeeIdCard.findFirst({
-      where:{userId:parseInt(id)}
+      where:{userId:parseInt(id)},
+      include: {
+        user: true, 
+      },
     });
     if (!employee)
       return res.status(404).json({ message: "Employee ID card not found" });
@@ -66,11 +69,11 @@ export const getEmployeeIdCards = async (req, res) => {
     ...(searchTerm ? { name: { contains: searchTerm } } : {}),
   };
   try {
-    const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
-    const skip = (page - 1) * limit; // Calculate the offset
+    const { page = 1, limit = 10 } = req.query; 
+    const skip = (page - 1) * limit; 
 
-    // Fetch paginated employee ID cards
-    const employeeIdCards = await prisma.employeeIdCard.findMany({
+
+    const idcards = await prisma.employeeIdCard.findMany({
       where:filter,
       skip: parseInt(skip),
       take: parseInt(limit),
@@ -80,15 +83,15 @@ export const getEmployeeIdCards = async (req, res) => {
     });
 
     // Get the total count of employee ID cards to calculate total pages
-    const totalEmployeeIdCards = await prisma.employeeIdCard.count();
-    const totalPages = Math.ceil(totalEmployeeIdCards / limit);
+    const totalIdCards = await prisma.employeeIdCard.count();
+    const totalPages = Math.ceil(totalIdCards / limit);
 
     res.status(200).json({
-      employeeIdCards,
+      idcards,
       pagination: {
         currentPage: parseInt(page),
         totalPages,
-        totalEmployeeIdCards,
+        totalIdCards,
       },
     });
   } catch (error) {

@@ -101,38 +101,70 @@ export const approveRequest = async (req, res) => {
 };
 
 export const getAllTransferPairs = async (req, res) => {
-  const { status } = req.query;
-  console.log(status);
+  const { page = 1, limit = 8, searchTerm = "" } = req.query;
+  const skip = (page - 1) * limit;
+
+
+  const filter = {
+    OR: [
+      {
+        user1: {
+          OR: [
+            { fullName: { contains: searchTerm } },
+            { email: { contains: searchTerm } },
+            { mobile: { contains: searchTerm } },
+          ],
+        },
+      },
+      {
+        user2: {
+          OR: [
+            { fullName: { contains: searchTerm } },
+            { email: { contains: searchTerm } },
+            { mobile: { contains: searchTerm } },
+          ],
+        },
+      },
+    ],
+  };
+
   try {
     const transferPairs = await prisma.transferPair.findMany({
-      where: {
-        status: status,
-      },
+      where: filter,
       include: {
         user1: {
           select: {
-            password: false,
             id: true,
             fullName: true,
             email: true,
-            mobile:true
+            mobile: true,
           },
         },
         user2: {
           select: {
-            password: false,
             id: true,
             fullName: true,
             email: true,
-            mobile:true
+            mobile: true,
           },
         },
         transferRequest: true,
       },
+      skip: parseInt(skip),
+      take: parseInt(limit),
     });
+    console.log(skip,limit)
+    const totalRequests = await prisma.transferPair.count({ where: filter });
+    const totalPages = Math.ceil(totalRequests / limit);
 
-    console.log(transferPairs);
-    res.status(200).json(transferPairs);
+    res.status(200).json({
+      transferPairs,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalRequests,
+      },
+    });
   } catch (error) {
     console.error("Error fetching transfer pairs:", error);
     res.status(500).json({ error: "Failed to fetch transfer pairs" });

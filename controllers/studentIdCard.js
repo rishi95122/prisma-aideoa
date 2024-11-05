@@ -3,36 +3,52 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getAllStudents = async (req, res) => {
-  const {searchTerm}=req.query;
-  console.log(searchTerm)
+  const { page = 1, limit = 10, searchTerm } = req.query;
+  const skip = (page - 1) * limit;
+
   const filter = {
     ...(searchTerm ? { name: { contains: searchTerm } } : {}),
   };
-
   try {
-    const students = await prisma.studentIdCard.findMany({
-      where:filter
+    const idcards = await prisma.studentIdCard.findMany({
+      where: filter,
+      skip: parseInt(skip),
+      take: parseInt(limit),
+      include:{
+        user:true
+      }
     });
-
-    res.status(200).json(students);
+    const totalIdCards = await prisma.studentIdCard.count();
+    const totalPages = Math.ceil(totalIdCards / limit);
+    res.status(200).json({
+      idcards,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalIdCards,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to retrieve students" });
   }
 };
 export const getIdCardById = async (req, res) => {
-  const {id}=req.params
+  const { id } = req.params;
   try {
     const students = await prisma.studentIdCard.findFirst({
-      where:{userId:parseInt(id)}
+      where: { userId: parseInt(id) },
+      include:{
+        user:true
+      }
     });
-    
+
     if (!students)
       return res.status(404).json({ message: "Student ID card not found" });
-  
-    console.log(students)
+
+    console.log(students);
     res.status(200).json(students);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: "Failed to retrieve students" });
   }
 };
@@ -47,48 +63,44 @@ export const addStudent = async (req, res) => {
     universityIDCard,
   } = req.body;
 
-
   try {
     const exist = await prisma.studentIdCard.findUnique({
-      where:{
-        userId:req.user.sub
-      }
+      where: {
+        userId: req.user.sub,
+      },
     });
-    if(exist)
-    {
+    if (exist) {
       await prisma.studentIdCard.update({
-        where:{
-          userId:parseInt(req.user.sub)
+        where: {
+          userId: parseInt(req.user.sub),
         },
         data: {
           name,
-          userId:parseInt(req.user.sub),
+          userId: parseInt(req.user.sub),
           collegeName,
           contactNo,
           address,
           studentPhoto,
-          universityId:universityIDCard,
-          status:"pending"
+          universityId: universityIDCard,
+          status: "pending",
         },
       });
-    }
-    else
+    } else
+      await prisma.studentIdCard.create({
+        data: {
+          name,
+          userId: parseInt(req.user.sub),
+          collegeName,
+          contactNo,
+          address,
+          studentPhoto,
+          universityId: universityIDCard,
+        },
+      });
 
-  await prisma.studentIdCard.create({
-      data: {
-        name,
-        userId:parseInt(req.user.sub),
-        collegeName,
-        contactNo,
-        address,
-        studentPhoto,
-        universityId:universityIDCard,
-      },
-    });
-
-    res.status(200).json({message:"Added"});
+    res.status(200).json({ message: "Added" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: "Failed to add student" });
   }
 };
@@ -107,14 +119,14 @@ export const deleteStudent = async (req, res) => {
 };
 
 export const updateStudentStatus = async (req, res) => {
-  const { id,status } = req.body;
-  console.log(req.body)
+  const { id, status } = req.body;
+  console.log(req.body);
   try {
     const updatedStudent = await prisma.studentIdCard.update({
       where: { id: parseInt(id) },
       data: { status },
     });
-    res.status(200).json({message:`Id card ${status}`});
+    res.status(200).json({ message: `Id card ${status}` });
   } catch (error) {
     res.status(500).json({ error: "Failed to update status" });
   }
