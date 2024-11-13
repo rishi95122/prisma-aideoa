@@ -1,15 +1,12 @@
-import express from "express";
-import { payu } from "../controllers/payu.js";
+import { Router } from 'express';
+import { createPaymentRequest, handlePayUResponse } from '../controllers/payuController.js';
 
-const router = express.Router();
+const router = Router();
 
-router.post("/", payu);
-router.post("/success", (req, res) => {
-  res.send("Payment Success!");
-});
+router.post('/pay', createPaymentRequest);
 
-router.post("/failure", (req, res) => {
-  res.send("Payment Failed!");
-});
+// Success and Failure URLs
+router.post('/success', handlePayUResponse);
+router.post('/failure', handlePayUResponse);
 
 export default router;

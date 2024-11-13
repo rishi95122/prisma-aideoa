@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>PayU Payment</title>
+</head>
+<body>
+    <h1>Redirecting to PayU...</h1>
+    <form id="payuForm" method="post" action="<%= actionURL %>">
+        <% for (let key in paymentData) { %>
+            <input type="hidden" name="<%= key %>" value="<%= paymentData[key] %>" />
+        <% } %>
+    </form>
+    <script type="text/javascript">
+        document.getElementById('payuForm').submit();
+    </script>
+</body>
+</html>

@@ -20,12 +20,37 @@ import contactUs from "./features/contact/contactRoutes.js";
 import session from "express-session";
 import passport from "passport";
 
+import payuRoutes from './routes/payu.js';
+import bodyParser from 'body-parser';
+
 dotenv.config();
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.set('view engine', 'ejs');
+
 const URL = process.env.URL;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// PayU Routes
+app.use('/payu', payuRoutes);
+
+// Home Route
+app.get('/mani', (req, res) => {
+    res.send(`
+        <h1>PayU Payment Integration</h1>
+        <form method="POST" action="/payu/pay">
+            <input type="text" name="firstname" placeholder="First Name"/>
+            <input type="email" name="email" placeholder="Email"/>
+            <input type="text" name="phone" placeholder="Phone"/>
+            <input type="text" name="amount" placeholder="Amount"/>
+            <input type="text" name="productinfo" placeholder="Product Info"/>
+            <button type="submit">Pay</button>
+        </form>
+    `);
+})
 
 app.use(
   cors({
