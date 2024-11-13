@@ -15,10 +15,16 @@ import ourTeamRoutes from "./routes/ourteam.js";
 import donationRoutes from "./routes/donation.js";
 import notificationRoutes from "./routes/notification.js";
 import googleRoutes from "./routes/googleroutes.js";
+import memberRoutes from "./routes/memberRoutes.js";
 import contactUs from "./features/contact/contactRoutes.js";
-
+import onlinetestRoutes from "./routes/onlineTest.js";
+import studentnewsRoutes from "./routes/studentNews.js";
+import employeeRoutes from "./routes/emoployeeNews.js";
+import latestnewsroute from "./routes/latestnewsroute.js";
+import educationroutes from "./routes/eduction.js";
 import session from "express-session";
 import passport from "passport";
+import ImageKit from "imagekit";
 
 import payuRoutes from './routes/payu.js';
 import bodyParser from 'body-parser';
@@ -76,6 +82,28 @@ app.use(passport.session());
 
 const port = 4000;
 
+const imagekit = new ImageKit({
+  urlEndpoint: "https://ik.imagekit.io/d8e3qlogb",
+  publicKey: "public_Q3vYMA6u3T7ku53MOJFrGn+cgDY=",
+  privateKey: "private_RhZj471ZRDPWLb/x/AxQxGYoc2Y=",
+});
+
+
+app.use(function (req, res, next) {
+
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
+app.get("/image", function (req, res) {
+  var result = imagekit.getAuthenticationParameters();
+  console.log(result);
+  res.send(result);
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/social", googleRoutes);
 app.use("/api/contact_us", contactUs);
@@ -92,7 +120,12 @@ app.use("/api/notification", notificationRoutes);
 // app.use("/api/mutualTransfer", employeeidCardRoutes);
 app.use("/api/mission", missionRoutes);
 app.use("/api/donations", donationRoutes);
-
+app.use("/api/latestnews", latestnewsroute);
+app.use("/api/members", memberRoutes);
+app.use("/api/onlinetest", onlinetestRoutes);
+app.use("/api/studentnews", studentnewsRoutes);
+app.use("/api/employeenews", employeeRoutes);
+app.use("/api/education", educationroutes);
 app.listen(port, () => {
   console.log(`Server is running on 4000`);
 });

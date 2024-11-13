@@ -4,13 +4,16 @@ import {
   addStudent,
   deleteStudent,
   updateStudentStatus,
+  getIdCardById
 } from "../controllers/studentIdCard.js";
+import protectRoute from "../middleware/protectedRoute.js";
 
 const router = express();
 
 router.get("/", getAllStudents);
-router.post("/", addStudent);
+router.get("/:id", getIdCardById);
+router.post("/",protectRoute, addStudent);
 router.delete("/:id", deleteStudent);
-router.put("/:id", updateStudentStatus);
+router.put("/approve", updateStudentStatus);
 
 export default router;

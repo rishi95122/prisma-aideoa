@@ -20,9 +20,8 @@ export const refreshToken = (req, res) => {
     if (err) {
       return res.status(403).json({ message: "Invalid Refresh Token" });
     }
-
-    
-    const newAccessToken = jwt.sign({ sub: user.sub }, accessTokenSecret, {
+      console.log("ref",user)
+    const newAccessToken = jwt.sign(  {  fullName: user.fullName,userType:user.userType,sub: user.sub }, accessTokenSecret, {
       expiresIn: "1m",
     });
 

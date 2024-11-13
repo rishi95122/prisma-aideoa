@@ -44,6 +44,7 @@ model TransferRequest {
   preferredTransferSubsidiary String
   preferredTransferMine   String
   preferredTransferArea   String
+  status                  String            @default("pending")
   createdAt               DateTime          @default(now())
   updatedAt               DateTime          @updatedAt
   transferPairs           TransferPair[]
@@ -58,7 +59,6 @@ model TransferPair {
   transferRequestId Int
   transferRequest  TransferRequest  @relation(fields: [transferRequestId], references: [id])
   transferDate     DateTime?
-  status           String           @default("review")
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -135,13 +135,14 @@ model Query {
 
 model EmployeeIdCard {
   id             Int      @id @default(autoincrement())
-  userId         Int
+  userId         Int      @unique
   user           User     @relation(fields: [userId], references: [id])
   name           String
   companyName    String
-  workingArea    String
   contactNo      String
   address        String
+
+  workingArea    String
   employeeIdNo   String    @unique
   employeePhoto  String?  
   status         String    @default("pending") 
@@ -150,7 +151,7 @@ model EmployeeIdCard {
 
 model StudentIdCard {
   id             Int      @id @default(autoincrement())
-   userId         Int
+   userId         Int     @unique
   user           User     @relation(fields: [userId], references: [id])
   name           String
   collegeName    String
@@ -186,7 +187,66 @@ model Donation {
   id            Int     @id @default(autoincrement())
   donationAmount Float
   name          String
-  mobileNumber  String   @unique
+  mobileNumber  String?   @unique
   utrNo         String   @unique
   createdAt     DateTime @default(now())
+}
+
+model Quiz {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  
+  quizUrl     String   
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StudentNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmployeeNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LatestNews {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  images      Image[]  // Relation with Image model
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String   // URL or path to the image
+  newsId    Int      // Foreign key to LatestNews
+  news      LatestNews @relation(fields: [newsId], references: [id])
+}
+
+model File {
+  id        Int     @id @default(autoincrement())
+  name      String
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Video {
+  id        Int     @id @default(autoincrement())
+  title     String
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

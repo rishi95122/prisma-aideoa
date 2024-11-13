@@ -57,8 +57,9 @@ export const updateSocialMediaLink = async (req, res) => {
 export const deleteSocialMediaLink = async (req, res) => {
   try {
     const { id } = req.params;
+   
     const deletedLink = await prisma.socialMediaLink.delete({
-      where: { id },
+      where: { id:parseInt(id) },
     });
 
     res.status(200).json({ message: "Social media link deleted successfully" });

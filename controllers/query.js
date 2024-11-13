@@ -28,19 +28,50 @@ export const addQuery = async (req, res) => {
 };
 
 export const getAllQuery = async (req, res) => {
+  const {searchTerm}=req.query;
+  console.log(searchTerm)
+  const filter = {
+    ...(searchTerm ? { name: { contains: searchTerm } } : {}),
+  };
+
+
   try {
-    const queries = await prisma.query.findMany();
-    res.status(200).json(queries);
+    const { page = 1, limit = 10 } = req.query; 
+    const skip = (page - 1) * limit; 
+
+ 
+    const queries = await prisma.query.findMany({
+      where:filter
+    ,
+      skip: parseInt(skip),
+      take: parseInt(limit),
+    });
+
+
+    const totalQueries = await prisma.query.count();
+    const totalPages = Math.ceil(totalQueries / limit);
+
+    res.status(200).json({
+      queries,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalQueries,
+      },
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve query", error: error.message });
+    res.status(500).json({
+      message: "Failed to retrieve query",
+      error: error.message,
+    });
   }
 };
+
 
 export const deleteQuery = async (req, res) => {
   try {
     const { id } = req.params;
+   
     const deletedForm = await prisma.query.delete({
       where: { id },
     });
@@ -51,6 +82,7 @@ export const deleteQuery = async (req, res) => {
     if (error.code === "P2025") {
       return res.status(404).json({ message: "Query not found" });
     }
+    console.log(error)
     res
       .status(400)
       .json({ message: "Failed to delete the Query", error: error.message });
