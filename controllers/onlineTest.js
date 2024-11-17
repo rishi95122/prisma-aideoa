@@ -14,7 +14,7 @@ export const getQuizzes = async (req, res) => {
 
     // Get the total count of quizzes to calculate total pages
     const totalQuizzes = await prisma.quiz.count();
-    const totalPages = Math.ceil(totalQuizzes / limit);
+    const totalPages = Math.ceil(totalQuizzes / parseInt(limit));
 
     res.status(200).json({
       quizzes,
@@ -22,12 +22,14 @@ export const getQuizzes = async (req, res) => {
         currentPage: parseInt(page),
         totalPages,
         totalQuizzes,
+        limit: parseInt(limit),
       },
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch quizzes' });
   }
 };
+
 
 
 

@@ -4,8 +4,22 @@ const prisma = new PrismaClient();
 
 export const getFiles = async (req, res) => {
   try {
-    const files = await prisma.file.findMany();
-    res.status(200).json(files);
+    const { page = 1, limit = 10 } = req.query; // Default values: page 1, limit 10
+    const skip = (page - 1) * limit;
+
+    const files = await prisma.file.findMany({
+      skip: parseInt(skip), // Skip items for pagination
+      take: parseInt(limit), // Limit number of items
+    });
+
+    const totalFiles = await prisma.file.count(); // Total number of files
+
+    res.status(200).json({
+      files,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalFiles / limit),
+      totalFiles,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch files' });
   }

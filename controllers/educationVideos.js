@@ -4,8 +4,22 @@ const prisma = new PrismaClient();
 
 export const getVideos = async (req, res) => {
   try {
-    const videos = await prisma.video.findMany();
-    res.json(videos);
+    const { page = 1, limit = 10 } = req.query; // Default values: page 1, limit 10
+    const skip = (page - 1) * limit;
+
+    const videos = await prisma.video.findMany({
+      skip: parseInt(skip), // Skip items for pagination
+      take: parseInt(limit), // Limit number of items
+    });
+
+    const totalVideos = await prisma.video.count(); // Total number of videos
+
+    res.status(200).json({
+      videos,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalVideos / limit),
+      totalVideos,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch videos' });
   }
