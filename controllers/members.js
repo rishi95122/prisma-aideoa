@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 export const getMembers = async (req, res) => {
   const { userType, page = 1, limit = 10 } = req.query;
+  console.log(userType);
   const type =
     userType === "Students" ? "student" : userType === "All" ? {} : "employee";
   console.log(type);
